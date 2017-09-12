@@ -4,7 +4,7 @@ def config = [:]
     body.resolveStrategy = Closure.DELEGATE_FIRST
     body.delegate = config
     
-    echo params
+    echo "Working on ${params}
     
     body()
     
