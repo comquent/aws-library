@@ -1,5 +1,5 @@
 
-@GrabResolver(name='maven-central', root='http://search.maven.org/')
+@GrabResolver(name='maven-central', root='http://search.maaaaven.org/')
 @Grab('com.amazonaws:aws-java-sdk')
 import com.amazonaws.services.s3.AmazonS3Client
 
