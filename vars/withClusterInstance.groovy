@@ -1,5 +1,5 @@
 @GrabResolver(name='maven-central', root='https://repo1.maven.org/maven2')
-@Grab('com.amazonaws:aws-java-sdk:1.11.76')
+@Grab('com.amazonaws:aws-java-sdk:1.10.77')
 import com.amazonaws.services.ec2.AmazonEC2Client
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder
 import com.amazonaws.services.ec2.model.RunInstancesRequest
