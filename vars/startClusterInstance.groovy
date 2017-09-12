@@ -1,8 +1,11 @@
 
-def call(body) {
-    // Any valid steps can be called from this code, just like in other
-    // Scripted Pipeline
-    echo "Hello."
+def call(params, body) {
+def config = [:]
+    body.resolveStrategy = Closure.DELEGATE_FIRST
+    body.delegate = config
+    
     body()
+    
+    
 }
 
