@@ -20,7 +20,7 @@ def config = [:]
 
     StandardUsernamePasswordCredentials usernamePasswordCredentials =
         CredentialsProvider.findCredentialById('aws-credentials',
-		    StandardUsernamePasswordCredentials.class, currentBuild, Collections.<DomainRequirement>emptyList())
+		    StandardUsernamePasswordCredentials.class, currentBuild.rawBuild, Collections.<DomainRequirement>emptyList())
         
 	def accessKey = usernamePasswordCredentials.getUsername()
     def secretAccessKey = usernamePasswordCredentials.getPassword().getPlainText()
