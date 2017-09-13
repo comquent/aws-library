@@ -1,6 +1,3 @@
-@Grab('org.jenkins-ci.plugins:jackson2-api:2.5.4') _
-@Grab('com.amazonaws:aws-java-sdk:1.11.119') _
-
 /*@GrabResolver(name='repo.jenkins-ci.org', root ='https://repo.jenkins-ci.org/public/')
 @GrabResolver(name='maven-central', root='https://repo1.maven.org/maven2')
 @Grab('org.jenkins-ci.plugins:jackson2-api:2.5.4')
