@@ -31,7 +31,7 @@ def config = [:]
     
     AmazonEC2Client ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
     RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
-    runInstancesRequest.withImageId('ami-9877a5f7').withInstanceType('m1.small')
+    runInstancesRequest.withImageId('ami-9877a5f7').withInstanceType('t2.small')
         .withMinCount(1).withMaxCount(1)
         .withKeyName('Jenkins Training')
         .withSecurityGroups(['Jenkins Master'])
