@@ -4,7 +4,7 @@ import com.amazonaws.services.ec2.model.RunInstancesRequest
 import com.amazonaws.services.ec2.model.RunInstancesResult
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider
-import com.amazonaws.auth.BasicSessionCredentials
+import com.amazonaws.auth.BasicAWSCredentials
 
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials
 import com.cloudbees.plugins.credentials.CredentialsProvider
@@ -26,9 +26,8 @@ def config = [:]
     def secretAccessKey = usernamePasswordCredentials.getPassword().getPlainText()
     println accessKey
     println secretAccessKey
-    def sessionToken = null
                     
-    def credentials = new AWSStaticCredentialsProvider(new BasicSessionCredentials(accessKey, secretAccessKey, sessionToken))
+    def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
     
     AmazonEC2Client ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
     RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
