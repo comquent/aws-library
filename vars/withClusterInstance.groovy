@@ -34,7 +34,7 @@ def config = [:]
     runInstancesRequest.withImageId('ami-9877a5f7').withInstanceType('m1.small')
         .withMinCount(1).withMaxCount(1)
         .withKeyName('Jenkins Training')
-        .withSecurityGroups('Jenkins Master')
+        .withSecurityGroups(['Jenkins Master'])
     RunInstancesResult result = ec2Client.runInstances(runInstancesRequest)
 	println result
 	
