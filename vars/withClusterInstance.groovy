@@ -6,6 +6,7 @@ def config = [:]
     body.delegate = config
 
     def instance = new EC2Instance()
+    instance.create()
     
     echo "Working on ${params}"
     
