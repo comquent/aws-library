@@ -28,7 +28,7 @@ def config = [:]
                     
     def credentials = new AWSStaticCredentialsProvider(new BasicSessionCredentials(accessKey, secretAccessKey, sessionToken))
     
-    AmazonEC2Client ec2Client = AmazonEC2ClientBuilder.defaultClient().withCredentials(credentials)
+    AmazonEC2Client ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
     RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
     runInstancesRequest.withImageId('ami-9877a5f7').withInstanceType('m1.small')
         .withMinCount(1).withMaxCount(1)
