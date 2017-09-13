@@ -24,15 +24,17 @@ def config = [:]
     def secretAccessKey = usernamePasswordCredentials.getPassword().getPlainText()
     def sessionToken = null
                     
-    AWSStaticCredentialsProvider(new BasicSessionCredentials(accessKey, secretAccessKey, sessionToken));
+    def credentials = new AWSStaticCredentialsProvider(new BasicSessionCredentials(accessKey, secretAccessKey, sessionToken))
     
-    AmazonEC2Client ec2Client = AmazonEC2ClientBuilder.defaultClient()
+    AmazonEC2Client ec2Client = AmazonEC2ClientBuilder.defaultClient().withCredentials(credentials)
     RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
     runInstancesRequest.withImageId('ami-9877a5f7').withInstanceType('m1.small')
         .withMinCount(1).withMaxCount(1)
         .withKeyName('Jenkins Training')
         .withSecurityGroups('Jenkins Master')
     RunInstancesResult result = ec2Client.runInstances(runInstancesRequest)
+	println result
+	
     
     body()
     
