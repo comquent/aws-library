@@ -1,5 +1,5 @@
 @GrabResolver(name='maven-central', root='https://repo1.maven.org/maven2')
-@Grab('com.amazonaws:aws-java-sdk')
+@Grab('com.amazonaws:aws-java-sdk:1.11.119')
 @GrabExclude('commons-codec:commons-codec')
 @GrabExclude('com.fasterxml.jackson.core:jackson-databind')
 import com.amazonaws.services.ec2.AmazonEC2Client
