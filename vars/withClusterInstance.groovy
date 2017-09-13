@@ -24,6 +24,8 @@ def config = [:]
         
 	def accessKey = usernamePasswordCredentials.getUsername()
     def secretAccessKey = usernamePasswordCredentials.getPassword().getPlainText()
+    println accessKey
+    prntln secretAccessKey
     def sessionToken = null
                     
     def credentials = new AWSStaticCredentialsProvider(new BasicSessionCredentials(accessKey, secretAccessKey, sessionToken))
