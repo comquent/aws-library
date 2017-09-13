@@ -2,6 +2,7 @@ import com.amazonaws.services.ec2.AmazonEC2Client
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder
 import com.amazonaws.services.ec2.model.RunInstancesRequest
 import com.amazonaws.services.ec2.model.RunInstancesResult
+import com.amazonaws.auth.AWSStaticCredentialsProvider
 
 def call(params = null, body) {
 def config = [:]
@@ -10,6 +11,14 @@ def config = [:]
 
     echo "Working on ${params}"
 
+    StandardUsernamePasswordCredentials usernamePasswordCredentials = CredentialsProvider.findCredentialById('aws-credentials',
+		StandardUsernamePasswordCredentials.class, run, Collections.<DomainRequirement>emptyList())
+	def accessKey = usernamePasswordCredentials.getUsername()
+    def secretAccessKey = usernamePasswordCredentials.getPassword().getPlainText()
+    def sessionToken = null
+                    
+    AWSStaticCredentialsProvider(new BasicSessionCredentials(accessKey, secretAccessKey, sessionToken));
+    
     AmazonEC2Client ec2Client = AmazonEC2ClientBuilder.defaultClient()
     RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
     runInstancesRequest.withImageId('ami-9877a5f7').withInstanceType('m1.small')
