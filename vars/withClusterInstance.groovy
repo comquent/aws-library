@@ -18,8 +18,10 @@ def config = [:]
 
     echo "Working on ${params}"
 
-    StandardUsernamePasswordCredentials usernamePasswordCredentials = CredentialsProvider.findCredentialById('aws-credentials',
-		StandardUsernamePasswordCredentials.class, run, Collections.<DomainRequirement>emptyList())
+    StandardUsernamePasswordCredentials usernamePasswordCredentials =
+        CredentialsProvider.findCredentialById('aws-credentials',
+		    StandardUsernamePasswordCredentials.class, currentBuild, Collections.<DomainRequirement>emptyList())
+        
 	def accessKey = usernamePasswordCredentials.getUsername()
     def secretAccessKey = usernamePasswordCredentials.getPassword().getPlainText()
     def sessionToken = null
