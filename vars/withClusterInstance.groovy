@@ -19,9 +19,8 @@ def call(params = null, body) {
 
     echo "Credentials: ${params.credentials}"
 
-    RunInstancesResult result
-    AmazonEC2Client ec2Client
-    
+    def result
+
     withCredentials([usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')]) {
 
         println accessKey
@@ -29,7 +28,7 @@ def call(params = null, body) {
 
         def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
 
-        ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
+        def ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
         RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
         println "runInstancesRequest"
         runInstancesRequest.withImageId('ami-9877a5f7').withInstanceType('t2.small')
@@ -40,11 +39,15 @@ def call(params = null, body) {
         result = ec2Client.runInstances(runInstancesRequest)
         println result
     }
-            
-        input(message: 'warte')
+
+    input(message: 'warte')
 
     withCredentials([usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')]) {
-            
+
+        def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
+
+        def ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
+
         def reservation = result.getReservation()
         def instances = reservation.getInstances()
         def instanceIds = instances.collect { instance ->
