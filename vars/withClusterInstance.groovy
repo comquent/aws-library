@@ -69,7 +69,7 @@ def call(params = null, body) {
                     }
                 }
             }
-            echo "State is ${state}"
+            echo "State is ${state.name}"
             return state == 16
         }
     }
