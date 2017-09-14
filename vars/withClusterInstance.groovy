@@ -19,7 +19,7 @@ def call(params = null, body) {
 
     echo "Credentials: ${params.credentials}"
 
-    withCredentials([usernamePassword(credentialsId: params.credentials, passwordVariable: 'accessKey', usernameVariable: 'secretAccessKey')]) {
+    withCredentials([usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')]) {
 
         println accessKey
         println secretAccessKey
