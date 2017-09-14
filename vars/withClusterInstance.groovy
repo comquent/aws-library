@@ -25,15 +25,18 @@ def call(params = null, body) {
         println secretAccessKey
 
         def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
-        println "credentials verified"
+
         AmazonEC2Client ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
         RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
+        println "runInstancesRequest"
         runInstancesRequest.withImageId('ami-9877a5f7').withInstanceType('t2.small')
                 .withMinCount(1).withMaxCount(1)
                 .withKeyName('Jenkins Training')
                 .withSecurityGroups(['Jenkins Master'])
+        println "runInstances"
         RunInstancesResult result = ec2Client.runInstances(runInstancesRequest)
         println result
+        sleep(time: 10)
         def reservation = result.getReservation()
         def instances = reservation.getInstances()
         def instanceIds = instances.collect { instance ->
