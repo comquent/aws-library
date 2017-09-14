@@ -19,6 +19,8 @@ def call(params = null, body) {
 
     echo "Credentials: ${params.credentials}"
 
+    RunInstancesResult result = null
+    
     withCredentials([usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')]) {
 
         println accessKey
@@ -34,7 +36,7 @@ def call(params = null, body) {
                 .withKeyName('Jenkins Training')
                 .withSecurityGroups(['Jenkins Master'])
         println "runInstances"
-        RunInstancesResult result = ec2Client.runInstances(runInstancesRequest)
+        result = ec2Client.runInstances(runInstancesRequest)
         println result
     }
             
