@@ -12,11 +12,11 @@ import com.cloudbees.plugins.credentials.domains.DomainRequirement
 
 
 def call(params = null, body) {
-def config = [:]
+    def config = [:]
     body.resolveStrategy = Closure.DELEGATE_FIRST
     body.delegate = config
 
-    echo params
+    echo "${params}"
     echo "Credentials: ${params.credentials}"
 
     withCredentials([usernamePassword(credentialsId: params.credentials, passwordVariable: 'accessKey', usernameVariable: 'secretAccessKey')]) {
