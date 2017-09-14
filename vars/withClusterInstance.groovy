@@ -65,6 +65,7 @@ def call(params = null, body) {
                 echo i.getPublicDnsName()
             }
         }
+        println result
 
     }
 
