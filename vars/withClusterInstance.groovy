@@ -17,7 +17,6 @@ def call(params = null, body) {
     body.resolveStrategy = Closure.DELEGATE_FIRST
     body.delegate = config
 
-    echo "${params}"
     echo "Credentials: ${params.credentials}"
 
     withCredentials([usernamePassword(credentialsId: params.credentials, passwordVariable: 'accessKey', usernameVariable: 'secretAccessKey')]) {
@@ -26,7 +25,7 @@ def call(params = null, body) {
         println secretAccessKey
 
         def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
-
+        println "credentials verified"
         AmazonEC2Client ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
         RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
         runInstancesRequest.withImageId('ami-9877a5f7').withInstanceType('t2.small')
@@ -43,7 +42,7 @@ def call(params = null, body) {
 
         DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest()
         describeInstancesRequest.setInstanceIds(instanceIds)
-        
+
         def describeInstancesResult = ec2Client.describeInstances(describeInstancesRequest)
         def reservations = describeInstancesResult.getReservations()
         reservations.each { res ->
