@@ -20,5 +20,5 @@ class EC2Instance {
         .withSecurityGroups('Jenkins Master')
     RunInstancesResult result = ec2Client.runInstances(runInstancesRequest)
   }
-  
+
 }

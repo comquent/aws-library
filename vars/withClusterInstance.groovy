@@ -20,15 +20,15 @@ def config = [:]
 
     StandardUsernamePasswordCredentials usernamePasswordCredentials =
         CredentialsProvider.findCredentialById('aws-credentials',
-		    StandardUsernamePasswordCredentials.class, currentBuild.rawBuild, Collections.<DomainRequirement>emptyList())
-        
-	def accessKey = usernamePasswordCredentials.getUsername()
+            StandardUsernamePasswordCredentials.class, currentBuild.rawBuild, Collections.<DomainRequirement>emptyList())
+
+    def accessKey = usernamePasswordCredentials.getUsername()
     def secretAccessKey = usernamePasswordCredentials.getPassword().getPlainText()
     println accessKey
     println secretAccessKey
-                    
+
     def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
-    
+
     AmazonEC2Client ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
     RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
     runInstancesRequest.withImageId('ami-9877a5f7').withInstanceType('t2.small')
@@ -36,9 +36,9 @@ def config = [:]
         .withKeyName('Jenkins Training')
         .withSecurityGroups(['Jenkins Master'])
     RunInstancesResult result = ec2Client.runInstances(runInstancesRequest)
-	println result
-	
-    
+    println result
+
+
     body()
-    
+
 }
