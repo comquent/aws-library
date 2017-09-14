@@ -17,8 +17,6 @@ def call(params = null, body) {
     body.resolveStrategy = Closure.DELEGATE_FIRST
     body.delegate = config
 
-    echo "Credentials: ${params.credentials}"
-
     def result
 
     withCredentials([usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')]) {
@@ -40,34 +38,44 @@ def call(params = null, body) {
         println result
     }
 
-    input(message: 'warte')
+    def publicDnsName
+    def state
 
-    withCredentials([usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')]) {
+    timeout(300) {
+        waitUntil {
+            sleep(time: 5)
+            withCredentials([usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')]) {
 
-        def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
+                def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
 
-        def ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
+                def ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
 
-        def reservation = result.getReservation()
-        def instances = reservation.getInstances()
-        def instanceIds = instances.collect { instance ->
-            instance.getInstanceId()
-        }
+                def reservation = result.getReservation()
+                def instances = reservation.getInstances()
+                def instanceIds = instances.collect { instance ->
+                    instance.getInstanceId()
+                }
 
-        DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest()
-        describeInstancesRequest.setInstanceIds(instanceIds)
+                DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest()
+                describeInstancesRequest.setInstanceIds(instanceIds)
 
-        def describeInstancesResult = ec2Client.describeInstances(describeInstancesRequest)
-        def reservations = describeInstancesResult.getReservations()
-        reservations.each { res ->
-            inst = res.getInstances()
-            inst.each { i ->
-                echo i.getPublicDnsName()
+                def describeInstancesResult = ec2Client.describeInstances(describeInstancesRequest)
+                def reservations = describeInstancesResult.getReservations()
+                reservations.each { res ->
+                    inst = res.getInstances()
+                    inst.each { i ->
+                        state = i.getState().getCode()
+                        publicDnsName = i.getPublicDnsName()
+                    }
+                }
             }
+            echo "State is ${state}"
+            return state == 16
         }
-        println result
-
     }
+
+    echo "Public DNS name: ${publicDnsName}"
+    echo "State: ${state}"
 
     body()
 
