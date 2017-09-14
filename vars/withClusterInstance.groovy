@@ -33,8 +33,8 @@ def call(params = null, body) {
                 .withMinCount(1).withMaxCount(1)
                 .withKeyName('Jenkins Training')
                 .withSecurityGroups(['Jenkins Master'])
-        // RunInstancesResult result = ec2Client.runInstances(runInstancesRequest)
-        // println result
+        RunInstancesResult result = ec2Client.runInstances(runInstancesRequest)
+        println result
         def reservation = result.getReservation()
         def instances = reservation.getInstances()
         def instanceIds = instances.collect { instance ->
