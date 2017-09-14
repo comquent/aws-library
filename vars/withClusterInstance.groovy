@@ -50,7 +50,7 @@ def call(params = null, body) {
         reservations.each { res ->
             inst = res.getInstances()
             inst.each { i ->
-                def e = i.getPublicDnsName()
+                echo i.getPublicDnsName()
             }
         }
 
