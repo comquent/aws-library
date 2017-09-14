@@ -64,13 +64,13 @@ def call(params = null, body) {
                 reservations.each { res ->
                     inst = res.getInstances()
                     inst.each { i ->
-                        state = i.getState().getCode()
+                        state = i.getState()
                         publicDnsName = i.getPublicDnsName()
                     }
                 }
             }
             echo "State is ${state.getName()}"
-            return state == 16
+            return state.getCode() == 16
         }
     }
 
