@@ -19,7 +19,8 @@ def call(params = null, body) {
 
     echo "Credentials: ${params.credentials}"
 
-    RunInstancesResult result = null
+    RunInstancesResult result
+    AmazonEC2Client ec2Client
     
     withCredentials([usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')]) {
 
@@ -28,7 +29,7 @@ def call(params = null, body) {
 
         def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
 
-        AmazonEC2Client ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
+        ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
         RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
         println "runInstancesRequest"
         runInstancesRequest.withImageId('ami-9877a5f7').withInstanceType('t2.small')
