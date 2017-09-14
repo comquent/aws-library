@@ -36,6 +36,9 @@ def call(params = null, body) {
         println "runInstances"
         RunInstancesResult result = ec2Client.runInstances(runInstancesRequest)
         println result
+        
+        input(message: 'warte')
+        
         def reservation = result.getReservation()
         def instances = reservation.getInstances()
         def instanceIds = instances.collect { instance ->
