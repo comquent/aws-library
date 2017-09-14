@@ -16,6 +16,7 @@ def config = [:]
     body.resolveStrategy = Closure.DELEGATE_FIRST
     body.delegate = config
 
+    echo params
     echo "Credentials: ${params.credentials}"
 
     withCredentials([usernamePassword(credentialsId: params.credentials, passwordVariable: 'accessKey', usernameVariable: 'secretAccessKey')]) {
