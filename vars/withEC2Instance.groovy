@@ -27,6 +27,40 @@ AmazonEC2Client getEC2Client() {
 }
 
 
+/**
+ * Wait for the instance to be in a full running state.
+ * 
+ * @param instanceId
+ * 
+ * @return
+ * The public DNS name of the instance
+ */
+def waitOnEC2Instance(instanceId) {
+    def publicDnsName
+
+    echo "Waiting until instance is up"
+    timeout(5) {
+        waitUntil {
+            DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest()
+            describeInstancesRequest.setInstanceIds([instanceId])
+
+            DescribeInstancesResult describeInstancesResult = getEC2Client().describeInstances(describeInstancesRequest)
+            def instance = describeInstancesResult.reservations.first().instances.first()
+            def state = instance.state
+            publicDnsName = instance.getPublicDnsName()
+            echo "... State: ${state.name} (${state.code})"
+            if (state.code == 16) {
+                return true
+            }
+            sleep(time: 5)
+            return false
+        }
+    }
+    echo "    Public DNS name: ${publicDnsName}"
+    publicDnsName
+}
+
+
 
 /**
  * Call on the object.
@@ -46,36 +80,16 @@ def call(params = null, body) {
 
         RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
         runInstancesRequest.withImageId('ami-9877a5f7').withInstanceType('t2.nano')
-                .withMinCount(1).withMaxCount(1)
-                .withKeyName('Jenkins Training')
-                .withSecurityGroups(['Jenkins Master'])
+        .withMinCount(1).withMaxCount(1)
+        .withKeyName('Jenkins Training')
+        .withSecurityGroups(['Jenkins Master'])
 
         RunInstancesResult result = getEC2Client().runInstances(runInstancesRequest)
         instanceId = result.reservation.instances.first().instanceId
 
         echo "    Instance ID: ${instanceId}"
 
-        def publicDnsName
-
-        echo "Waiting until instance is up"
-        timeout(5) {
-            waitUntil {
-                DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest()
-                describeInstancesRequest.setInstanceIds([instanceId])
-
-                DescribeInstancesResult describeInstancesResult = getEC2Client().describeInstances(describeInstancesRequest)
-                def instance = describeInstancesResult.reservations.first().instances.first()
-                def state = instance.state
-                publicDnsName = instance.getPublicDnsName()
-                echo "... State: ${state.name} (${state.code})"
-                if (state.code == 16) {
-                    return true
-                }
-                sleep(time: 5)
-                return false
-            }
-        }
-        echo "    Public DNS name: ${publicDnsName}"
+        publicDnsName = waitOnEC2Instance(instanceId)
 
         body.PUBLIC_DNS_NAME = publicDnsName
         body.INSTANCE_ID = instanceId
@@ -89,6 +103,5 @@ def call(params = null, body) {
         List <InstanceStateChange> instanceStateChange = terminateInstancesResult.terminatingInstances
         def state = instanceStateChange.currentState
         echo "Terminating instance ID ${instanceId} has been triggered"
-
     }
 }
