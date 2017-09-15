@@ -89,11 +89,12 @@ def call(params = null, body) {
 
         echo "    Instance ID: ${instanceId}"
 
-        publicDnsName = waitOnEC2Instance(instanceId)
-
-        body.PUBLIC_DNS_NAME = publicDnsName
         body.INSTANCE_ID = instanceId
         body.SSH_PRIVATE_KEY = 'not yet implemented'
+
+        if (params?.waitOn in [null, true]) {
+            body.PUBLIC_DNS_NAME = waitOnEC2Instance(instanceId)
+        }
 
         body()
 
