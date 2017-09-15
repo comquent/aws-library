@@ -60,10 +60,9 @@ def call(params = null, body) {
                 echo "State is ${state.name} / ${state.code}"
                 return state.code == 16
                 PUBLIC_DNS_NAME = instance.getPublicDnsName()
+                echo "Public DNS name: ${PUBLIC_DNS_NAME}"
             }
         }
-
-        echo "Public DNS name: ${PUBLIC_DNS_NAME}"
 
 
         body()
