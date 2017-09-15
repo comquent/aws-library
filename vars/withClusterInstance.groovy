@@ -16,6 +16,10 @@ import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredenti
 import com.cloudbees.plugins.credentials.CredentialsProvider
 import com.cloudbees.plugins.credentials.domains.DomainRequirement
 
+AmazonEC2Client getEC2Client() {
+    def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
+    AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
+}
 
 def call(params = null, body) {
     def config = [:]
@@ -28,16 +32,13 @@ def call(params = null, body) {
         usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')
     ]) {
 
-        def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
-        AmazonEC2Client ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
-
         RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
         runInstancesRequest.withImageId('ami-9877a5f7').withInstanceType('t2.nano')
                 .withMinCount(1).withMaxCount(1)
                 .withKeyName('Jenkins Training')
                 .withSecurityGroups(['Jenkins Master'])
 
-        RunInstancesResult result = ec2Client.runInstances(runInstancesRequest)
+        RunInstancesResult result = getEC2Client().runInstances(runInstancesRequest)
         INSTANCE_ID = result.reservation.instances.first().instanceId
 
         echo "Instance ID: {INSTANCE_ID}"
@@ -49,13 +50,10 @@ def call(params = null, body) {
             waitUntil {
                 sleep(time: 5)
 
-                //def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
-                //AmazonEC2Client ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
-
                 DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest()
                 describeInstancesRequest.setInstanceIds([INSTANCE_ID])
 
-                DescribeInstancesResult describeInstancesResult = ec2Client.describeInstances(describeInstancesRequest)
+                DescribeInstancesResult describeInstancesResult = getEC2Client().describeInstances(describeInstancesRequest)
                 instance = describeInstancesResult.reservations.first().instances.first()
                 state = instance.state
                 PUBLIC_DNS_NAME = instance.publicDnsName
@@ -70,12 +68,9 @@ def call(params = null, body) {
         body()
 
 
-        //def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
-        //AmazonEC2Client ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
-
         TerminateInstancesRequest terminateInstancesRequest = new TerminateInstancesRequest([INSTANCE_ID])
 
-        TerminateInstancesResult terminateInstancesResult = ec2Client.terminateInstances(terminateInstancesRequest)
+        TerminateInstancesResult terminateInstancesResult = getEC2Client().terminateInstances(terminateInstancesRequest)
         List <InstanceStateChange> instanceStateChange = terminateInstancesResult.terminatingInstances
         def state = instanceStateChange.currentState
         echo "State is {state.name} / ${state.code}"
