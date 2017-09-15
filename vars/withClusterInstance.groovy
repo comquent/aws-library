@@ -57,9 +57,9 @@ def call(params = null, body) {
                 DescribeInstancesResult describeInstancesResult = getEC2Client().describeInstances(describeInstancesRequest)
                 def instance = describeInstancesResult.reservations.first().instances.first()
                 def state = instance.state
-                echo "State is ${state.name}"
+                echo "State is ${state.name} / ${state.code}"
                 return state.code == 16
-                PUBLIC_DNS_NAME = instance.publicDnsName
+                PUBLIC_DNS_NAME = instance.getPublicDnsName()
             }
         }
 
