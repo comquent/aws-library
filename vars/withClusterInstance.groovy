@@ -56,12 +56,12 @@ def call(params = null, body) {
                 describeInstancesRequest.setInstanceIds([INSTANCE_ID])
 
                 DescribeInstancesResult describeInstancesResult = getEC2Client().describeInstances(describeInstancesRequest)
-                instance = describeInstancesResult.reservations.first().instances.first()
-                state = instance.state
+                def instance = describeInstancesResult.reservations.first().instances.first()
+                def state = instance.state
+                echo "State is ${state.name}"
+                return state.code == 16
                 PUBLIC_DNS_NAME = instance.publicDnsName
             }
-            echo "State is ${state.name}"
-            return state.code == 16
         }
 
         echo "Public DNS name: ${PUBLIC_DNS_NAME}"
