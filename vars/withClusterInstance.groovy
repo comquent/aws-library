@@ -75,7 +75,7 @@ def call(params = null, body) {
         TerminateInstancesResult terminateInstancesResult = getEC2Client().terminateInstances(terminateInstancesRequest)
         List <InstanceStateChange> instanceStateChange = terminateInstancesResult.terminatingInstances
         def state = instanceStateChange.currentState
-        echo "Terminating instance has been triggered"
+        echo "Terminating instance ID ${instanceId} has been triggered"
 
     }
 }
