@@ -72,6 +72,7 @@ def call(params = null, body) {
     
     // Make methods in body available
     body.waitOnEC2Instance = this.&waitOnEC2Instance
+    body.withEC2Instance = this
 
     def instanceId
 
