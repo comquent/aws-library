@@ -48,7 +48,7 @@ def call(params = null, body) {
         def publicDnsName
 
         echo "Waiting until instance is up"
-/*        timeout(5) {
+        timeout(5) {
             waitUntil {
                 DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest()
                 describeInstancesRequest.setInstanceIds([instanceId])
@@ -71,7 +71,7 @@ def call(params = null, body) {
         body.INSTANCE_ID = instanceId
         body.SSH_PRIVATE_KEY = 'blabla'
 
-        body()
+/*        body()
 
         TerminateInstancesRequest terminateInstancesRequest = new TerminateInstancesRequest([instanceId])
 
