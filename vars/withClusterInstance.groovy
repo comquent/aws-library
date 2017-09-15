@@ -22,7 +22,7 @@ AmazonEC2Client getEC2Client() {
 }
 
 def call(params = null, body) {
-/*    def config = [:]
+    def config = [:]
     body.resolveStrategy = Closure.DELEGATE_FIRST
     body.delegate = config
 
@@ -34,7 +34,7 @@ def call(params = null, body) {
 
         echo "Creating EC2 instance"
 
-        RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
+/*        RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
         runInstancesRequest.withImageId('ami-9877a5f7').withInstanceType('t2.nano')
                 .withMinCount(1).withMaxCount(1)
                 .withKeyName('Jenkins Training')
@@ -79,6 +79,6 @@ def call(params = null, body) {
         List <InstanceStateChange> instanceStateChange = terminateInstancesResult.terminatingInstances
         def state = instanceStateChange.currentState
         echo "Terminating instance ID ${instanceId} has been triggered"
-
-    }*/
+*/
+    }
 }
