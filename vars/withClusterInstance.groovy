@@ -60,9 +60,9 @@ def call(params = null, body) {
                 echo "... State: ${state.name} (${state.code})"
                 if (state.code == 16) {
                     return true
-                } else {
-                    sleep(time: 5)
                 }
+                sleep(time: 5)
+                return false
             }
         }
         echo "    Public DNS name: ${publicDnsName}"
