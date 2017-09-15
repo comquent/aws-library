@@ -73,12 +73,12 @@ def call(params = null, body) {
 
         body()
 
-/*        TerminateInstancesRequest terminateInstancesRequest = new TerminateInstancesRequest([instanceId])
+        TerminateInstancesRequest terminateInstancesRequest = new TerminateInstancesRequest([instanceId])
 
         TerminateInstancesResult terminateInstancesResult = getEC2Client().terminateInstances(terminateInstancesRequest)
         List <InstanceStateChange> instanceStateChange = terminateInstancesResult.terminatingInstances
         def state = instanceStateChange.currentState
         echo "Terminating instance ID ${instanceId} has been triggered"
-*/
+
     }
 }
