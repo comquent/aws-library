@@ -5,6 +5,9 @@ import com.amazonaws.services.ec2.model.RunInstancesResult
 import com.amazonaws.services.ec2.model.DescribeInstancesRequest
 import com.amazonaws.services.ec2.model.DescribeInstancesResult
 import com.amazonaws.services.ec2.model.Reservation
+import com.amazonaws.services.ec2.model.TerminateInstancesRequest
+import com.amazonaws.services.ec2.model.TerminateInstancesResult
+import com.amazonaws.services.ec2.model.InstanceStateChange
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider
 import com.amazonaws.auth.BasicAWSCredentials
@@ -21,7 +24,9 @@ def call(params = null, body) {
 
     def INSTANCE_ID
 
-    withCredentials([usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')]) {
+    withCredentials([
+        usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')
+    ]) {
 
         def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
         AmazonEC2Client ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
@@ -35,14 +40,18 @@ def call(params = null, body) {
         RunInstancesResult result = ec2Client.runInstances(runInstancesRequest)
         INSTANCE_ID = result.reservation.instances.first().instanceId
     }
+    
+    echo "Instance ID: {INSTANCE_ID}"
 
     def PUBLIC_DNS_NAME
-    def state
 
     timeout(5) {
+        def state
         waitUntil {
-            sleep(time: 10)
-            withCredentials([usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')]) {
+            sleep(time: 5)
+            withCredentials([
+                usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')
+            ]) {
 
                 def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
                 AmazonEC2Client ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
@@ -55,14 +64,23 @@ def call(params = null, body) {
                 state = instance.state
                 PUBLIC_DNS_NAME = instance.publicDnsName
             }
-            echo "State is ${state.getName()}"
-            return state.getCode() == 16
+            echo "State is ${state.name}"
+            return state.code == 16
         }
     }
 
     echo "Public DNS name: ${PUBLIC_DNS_NAME}"
-    echo "State: ${state}"
+
 
     body()
-
+    
+    def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
+    AmazonEC2Client ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
+    
+    TerminateInstancesRequest terminateInstancesRequest = new TerminateInstancesRequest([INSTANCE_ID])
+    
+    TerminateInstancesResult terminateInstancesResult = ec2Client.terminateInstances(terminateInstancesRequest)
+    List <InstanceStateChange> instanceStateChange = terminateInstancesResult.terminatingInstances
+    def state = instanceStateChange.currentState
+    echo "State is {state.name} / ${state.code}"
 }
