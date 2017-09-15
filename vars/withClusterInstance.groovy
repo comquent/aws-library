@@ -33,7 +33,7 @@ def call(params = null, body) {
                 .withSecurityGroups(['Jenkins Master'])
 
         RunInstancesResult result = ec2Client.runInstances(runInstancesRequest)
-        INSTANCE_ID = result.reservation.instances.first().instancdId
+        INSTANCE_ID = result.reservation.instances.first().instanceId
     }
 
     def PUBLIC_DNS_NAME
