@@ -3,6 +3,8 @@ import com.amazonaws.services.ec2.AmazonEC2ClientBuilder
 import com.amazonaws.services.ec2.model.RunInstancesRequest
 import com.amazonaws.services.ec2.model.RunInstancesResult
 import com.amazonaws.services.ec2.model.DescribeInstancesRequest
+import com.amazonaws.services.ec2.model.DescribeInstancesResult
+import com.amazonaws.services.ec2.model.Reservation
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider
 import com.amazonaws.auth.BasicAWSCredentials
@@ -17,64 +19,48 @@ def call(params = null, body) {
     body.resolveStrategy = Closure.DELEGATE_FIRST
     body.delegate = config
 
-    def result
+    def INSTANCE_ID
 
     withCredentials([usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')]) {
 
-        println accessKey
-        println secretAccessKey
-
         def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
+        AmazonEC2Client ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
 
-        def ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
         RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
-        println "runInstancesRequest"
-        runInstancesRequest.withImageId('ami-9877a5f7').withInstanceType('t2.small')
+        runInstancesRequest.withImageId('ami-9877a5f7').withInstanceType('t2.nano')
                 .withMinCount(1).withMaxCount(1)
                 .withKeyName('Jenkins Training')
                 .withSecurityGroups(['Jenkins Master'])
-        println "runInstances"
-        result = ec2Client.runInstances(runInstancesRequest)
-        println result
+
+        RunInstancesResult result = ec2Client.runInstances(runInstancesRequest)
+        INSTANCE_ID = result.reservation.instances.first().instancdId
     }
 
-    def publicDnsName
+    def PUBLIC_DNS_NAME
     def state
 
-    timeout(300) {
+    timeout(5) {
         waitUntil {
-            sleep(time: 5)
+            sleep(time: 10)
             withCredentials([usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')]) {
 
                 def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
-
-                def ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
-
-                def reservation = result.getReservation()
-                def instances = reservation.getInstances()
-                def instanceIds = instances.collect { instance ->
-                    instance.getInstanceId()
-                }
+                AmazonEC2Client ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
 
                 DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest()
-                describeInstancesRequest.setInstanceIds(instanceIds)
+                describeInstancesRequest.setInstanceIds([INSTANCE_ID])
 
-                def describeInstancesResult = ec2Client.describeInstances(describeInstancesRequest)
-                def reservations = describeInstancesResult.getReservations()
-                reservations.each { res ->
-                    inst = res.getInstances()
-                    inst.each { i ->
-                        state = i.getState()
-                        publicDnsName = i.getPublicDnsName()
-                    }
-                }
+                DescribeInstancesResult describeInstancesResult = ec2Client.describeInstances(describeInstancesRequest)
+                instance = describeInstancesResult.reservations.first().instance.first()
+                state = instance.state
+                PUBLIC_DNS_NAME = instance.publicDnsName
             }
             echo "State is ${state.getName()}"
             return state.getCode() == 16
         }
     }
 
-    echo "Public DNS name: ${publicDnsName}"
+    echo "Public DNS name: ${PUBLIC_DNS_NAME}"
     echo "State: ${state}"
 
     body()
