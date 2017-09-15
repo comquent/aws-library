@@ -51,7 +51,7 @@ def call(params = null, body) {
                 describeInstancesRequest.setInstanceIds([INSTANCE_ID])
 
                 DescribeInstancesResult describeInstancesResult = ec2Client.describeInstances(describeInstancesRequest)
-                instance = describeInstancesResult.reservations.first().instance.first()
+                instance = describeInstancesResult.reservations.first().instances.first()
                 state = instance.state
                 PUBLIC_DNS_NAME = instance.publicDnsName
             }
