@@ -48,7 +48,6 @@ def call(params = null, body) {
         def PUBLIC_DNS_NAME
 
         timeout(5) {
-            def state
             waitUntil {
                 sleep(time: 5)
 
