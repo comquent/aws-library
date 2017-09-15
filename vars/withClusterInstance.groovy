@@ -49,7 +49,7 @@ def call(params = null, body) {
             waitUntil {
                 sleep(time: 5)
 
-                def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
+                //def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
                 AmazonEC2Client ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
 
                 DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest()
@@ -70,7 +70,7 @@ def call(params = null, body) {
         body()
 
 
-        def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
+        //def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
         AmazonEC2Client ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
 
         TerminateInstancesRequest terminateInstancesRequest = new TerminateInstancesRequest([INSTANCE_ID])
