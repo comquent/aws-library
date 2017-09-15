@@ -18,7 +18,8 @@ import com.cloudbees.plugins.credentials.domains.DomainRequirement
 
 AmazonEC2Client getEC2Client() {
     def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
-    echo credentials
+    echo accessKey
+    echo secretAccessKey
     AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
 }
 
