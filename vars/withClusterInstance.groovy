@@ -63,6 +63,8 @@ def call(params = null, body) {
                 return state.code == 16
             }
         }
+        
+        body.PUBLIC_DNS_NAME = PUBLIC_DNS_NAME
 
 
         body()
