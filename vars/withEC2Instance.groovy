@@ -27,6 +27,30 @@ AmazonEC2Client getEC2Client() {
 }
 
 
+
+/**
+ * Create an EC2 instance.
+ * 
+ * @return
+ * The Id of the instance
+ */
+def createEC2Instance() {
+    echo "Creating EC2 instance"
+
+    RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
+    runInstancesRequest.withImageId('ami-9877a5f7').withInstanceType('t2.nano')
+            .withMinCount(1).withMaxCount(1)
+            .withKeyName('Jenkins Training')
+            .withSecurityGroups(['Jenkins Master'])
+
+    RunInstancesResult result = getEC2Client().runInstances(runInstancesRequest)
+    instanceId = result.reservation.instances.first().instanceId
+    echo "    Instance ID: ${instanceId}"
+    instanceId
+}
+
+
+
 /**
  * Wait for the instance to be in a full running state.
  * 
@@ -63,50 +87,44 @@ def waitOnEC2Instance(instanceId) {
 
 
 /**
+ * Terminate an EC2 instance.
+ * 
+ * @param instanceId
+ */
+def terminateEC2Instance(instanceId) {
+    TerminateInstancesRequest terminateInstancesRequest = new TerminateInstancesRequest([instanceId])
+
+    TerminateInstancesResult terminateInstancesResult = getEC2Client().terminateInstances(terminateInstancesRequest)
+    List <InstanceStateChange> instanceStateChange = terminateInstancesResult.terminatingInstances
+    def state = instanceStateChange.currentState
+    echo "Terminating instance ID ${instanceId} has been triggered"
+}
+
+
+
+/**
  * Call on the object.
  */
 def call(params = null, body) {
-    def config = [:]
-    body.resolveStrategy = Closure.DELEGATE_FIRST
-    body.delegate = config
-
-    // Make methods in body available
+    // Make methods in closure available
     body.waitOnEC2Instance = this.&waitOnEC2Instance
-    body.withEC2Instance = this.&call
-
-    def instanceId
+    body.createEC2Instance = this.&createEC2Instance
 
     withCredentials([
         usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')
     ]) {
-
-        echo "Creating EC2 instance"
-
-        RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
-        runInstancesRequest.withImageId('ami-9877a5f7').withInstanceType('t2.nano')
-        .withMinCount(1).withMaxCount(1)
-        .withKeyName('Jenkins Training')
-        .withSecurityGroups(['Jenkins Master'])
-
-        RunInstancesResult result = getEC2Client().runInstances(runInstancesRequest)
-        instanceId = result.reservation.instances.first().instanceId
-
-        echo "    Instance ID: ${instanceId}"
-
+        def instanceId = createEC2Instance()
         body.INSTANCE_ID = instanceId
+
         body.SSH_PRIVATE_KEY = 'not yet implemented'
 
         if (params?.waitOn in [null, true]) {
             body.PUBLIC_DNS_NAME = waitOnEC2Instance(instanceId)
         }
 
+        // Call closure
         body()
 
-        TerminateInstancesRequest terminateInstancesRequest = new TerminateInstancesRequest([instanceId])
-
-        TerminateInstancesResult terminateInstancesResult = getEC2Client().terminateInstances(terminateInstancesRequest)
-        List <InstanceStateChange> instanceStateChange = terminateInstancesResult.terminatingInstances
-        def state = instanceStateChange.currentState
-        echo "Terminating instance ID ${instanceId} has been triggered"
+        terminateEC2Instance(instanceId)
     }
 }
