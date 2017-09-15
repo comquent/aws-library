@@ -43,7 +43,7 @@ def call(params = null, body) {
         RunInstancesResult result = getEC2Client().runInstances(runInstancesRequest)
         INSTANCE_ID = result.reservation.instances.first().instanceId
 
-        echo "Instance ID: {INSTANCE_ID}"
+        echo "Instance ID: ${INSTANCE_ID}"
 
         def PUBLIC_DNS_NAME
 
@@ -74,6 +74,6 @@ def call(params = null, body) {
         TerminateInstancesResult terminateInstancesResult = getEC2Client().terminateInstances(terminateInstancesRequest)
         List <InstanceStateChange> instanceStateChange = terminateInstancesResult.terminatingInstances
         def state = instanceStateChange.currentState
-        echo "State is {state.name} / ${state.code}"
+        echo "State is ${state.name} / ${state.code}"
     }
 }
