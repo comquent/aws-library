@@ -106,9 +106,14 @@ def terminateEC2Instance(instanceId) {
  * Call on the object.
  */
 def call(params = null, body) {
+    def config = [:]
+    body.resolveStrategy = Closure.DELEGATE_FIRST
+    body.delegate = config
+
     // Make methods in closure available
     body.waitOnEC2Instance = this.&waitOnEC2Instance
     body.createEC2Instance = this.&createEC2Instance
+    body.terminateEC2Instance = this.&terminateEC2Instance
 
     withCredentials([
         usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')
