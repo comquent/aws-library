@@ -28,7 +28,7 @@ def call(params = null, body) {
     body.resolveStrategy = Closure.DELEGATE_FIRST
     body.delegate = config
 
-    def INSTANCE_ID
+    def instanceId
 
     withCredentials([
         usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')
@@ -41,36 +41,36 @@ def call(params = null, body) {
                 .withSecurityGroups(['Jenkins Master'])
 
         RunInstancesResult result = getEC2Client().runInstances(runInstancesRequest)
-        INSTANCE_ID = result.reservation.instances.first().instanceId
+        instanceId = result.reservation.instances.first().instanceId
 
-        echo "Instance ID: ${INSTANCE_ID}"
+        echo "Instance ID: ${instanceId}"
 
-        def PUBLIC_DNS_NAME
+        def publicDnsName
 
         timeout(5) {
             waitUntil {
                 sleep(time: 5)
 
                 DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest()
-                describeInstancesRequest.setInstanceIds([INSTANCE_ID])
+                describeInstancesRequest.setInstanceIds([instanceId])
 
                 DescribeInstancesResult describeInstancesResult = getEC2Client().describeInstances(describeInstancesRequest)
                 def instance = describeInstancesResult.reservations.first().instances.first()
                 def state = instance.state
-                PUBLIC_DNS_NAME = instance.getPublicDnsName()
+                publicDnsName = instance.getPublicDnsName()
                 echo "State is ${state.name} / ${state.code}"
-                echo "Public DNS name: ${PUBLIC_DNS_NAME}"
+                echo "Public DNS name: ${publicDnsName}"
                 return state.code == 16
             }
         }
         
-        body.PUBLIC_DNS_NAME = PUBLIC_DNS_NAME
-
+        body.PUBLIC_DNS_NAME = publicDnsName
+        body.INSTANCE_ID = instanceId
 
         body()
 
 
-        TerminateInstancesRequest terminateInstancesRequest = new TerminateInstancesRequest([INSTANCE_ID])
+        TerminateInstancesRequest terminateInstancesRequest = new TerminateInstancesRequest([instanceId])
 
         TerminateInstancesResult terminateInstancesResult = getEC2Client().terminateInstances(terminateInstancesRequest)
         List <InstanceStateChange> instanceStateChange = terminateInstancesResult.terminatingInstances
