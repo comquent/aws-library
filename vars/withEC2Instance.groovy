@@ -69,10 +69,10 @@ def call(params = null, body) {
     def config = [:]
     body.resolveStrategy = Closure.DELEGATE_FIRST
     body.delegate = config
-    
+
     // Make methods in body available
     body.waitOnEC2Instance = this.&waitOnEC2Instance
-    body.withEC2Instance = this
+    body.withEC2Instance = this.&call
 
     def instanceId
 
