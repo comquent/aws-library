@@ -18,8 +18,6 @@ import com.cloudbees.plugins.credentials.domains.DomainRequirement
 
 AmazonEC2Client getEC2Client() {
     def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
-    echo accessKey
-    echo secretAccessKey
     AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
 }
 
@@ -34,6 +32,8 @@ def call(params = null, body) {
         usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')
     ]) {
 
+        echo "Creating EC2 instance"
+
         RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
         runInstancesRequest.withImageId('ami-9877a5f7').withInstanceType('t2.nano')
                 .withMinCount(1).withMaxCount(1)
@@ -43,10 +43,11 @@ def call(params = null, body) {
         RunInstancesResult result = getEC2Client().runInstances(runInstancesRequest)
         instanceId = result.reservation.instances.first().instanceId
 
-        echo "Instance ID: ${instanceId}"
+        echo "    Instance ID: ${instanceId}"
 
         def publicDnsName
 
+        echo "Waiting unti instance is up"
         timeout(5) {
             waitUntil {
                 sleep(time: 5)
@@ -58,23 +59,23 @@ def call(params = null, body) {
                 def instance = describeInstancesResult.reservations.first().instances.first()
                 def state = instance.state
                 publicDnsName = instance.getPublicDnsName()
-                echo "State is ${state.name} / ${state.code}"
-                echo "Public DNS name: ${publicDnsName}"
+                echo "... State: ${state.name} (${state.code})"
                 return state.code == 16
             }
         }
-        
+        echo "    Public DNS name: ${publicDnsName}"
+
         body.PUBLIC_DNS_NAME = publicDnsName
         body.INSTANCE_ID = instanceId
 
         body()
-
 
         TerminateInstancesRequest terminateInstancesRequest = new TerminateInstancesRequest([instanceId])
 
         TerminateInstancesResult terminateInstancesResult = getEC2Client().terminateInstances(terminateInstancesRequest)
         List <InstanceStateChange> instanceStateChange = terminateInstancesResult.terminatingInstances
         def state = instanceStateChange.currentState
-        echo "State is ${state.name} / ${state.code}"
+        echo "Terminating instance has been triggered"
+
     }
 }
