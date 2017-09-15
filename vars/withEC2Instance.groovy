@@ -107,7 +107,6 @@ def terminateEC2Instance(instanceId) {
  */
 def call(params = null, body) {
     def config = [:]
-    echo.resolveStrategy
     body.resolveStrategy = Closure.TO_SELF
     body.delegate = config
 
