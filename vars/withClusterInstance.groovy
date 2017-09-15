@@ -40,7 +40,7 @@ def call(params = null, body) {
         RunInstancesResult result = ec2Client.runInstances(runInstancesRequest)
         INSTANCE_ID = result.reservation.instances.first().instanceId
     }
-    
+
     echo "Instance ID: {INSTANCE_ID}"
 
     def PUBLIC_DNS_NAME
@@ -73,14 +73,19 @@ def call(params = null, body) {
 
 
     body()
-    
-    def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
-    AmazonEC2Client ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
-    
-    TerminateInstancesRequest terminateInstancesRequest = new TerminateInstancesRequest([INSTANCE_ID])
-    
-    TerminateInstancesResult terminateInstancesResult = ec2Client.terminateInstances(terminateInstancesRequest)
-    List <InstanceStateChange> instanceStateChange = terminateInstancesResult.terminatingInstances
-    def state = instanceStateChange.currentState
-    echo "State is {state.name} / ${state.code}"
+
+
+    withCredentials([
+        usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')
+    ]) {
+        def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
+        AmazonEC2Client ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
+
+        TerminateInstancesRequest terminateInstancesRequest = new TerminateInstancesRequest([INSTANCE_ID])
+
+        TerminateInstancesResult terminateInstancesResult = ec2Client.terminateInstances(terminateInstancesRequest)
+        List <InstanceStateChange> instanceStateChange = terminateInstancesResult.terminatingInstances
+        def state = instanceStateChange.currentState
+        echo "State is {state.name} / ${state.code}"
+    }
 }
