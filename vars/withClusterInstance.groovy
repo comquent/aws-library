@@ -40,7 +40,7 @@ def call(params = null, body) {
                 .withKeyName('Jenkins Training')
                 .withSecurityGroups(['Jenkins Master'])
 
-/*        RunInstancesResult result = getEC2Client().runInstances(runInstancesRequest)
+        RunInstancesResult result = getEC2Client().runInstances(runInstancesRequest)
         instanceId = result.reservation.instances.first().instanceId
 
         echo "    Instance ID: ${instanceId}"
@@ -48,7 +48,7 @@ def call(params = null, body) {
         def publicDnsName
 
         echo "Waiting until instance is up"
-        timeout(5) {
+/*        timeout(5) {
             waitUntil {
                 DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest()
                 describeInstancesRequest.setInstanceIds([instanceId])
