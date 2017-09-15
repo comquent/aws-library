@@ -34,13 +34,13 @@ def call(params = null, body) {
 
         echo "Creating EC2 instance"
 
-/*        RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
+        RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
         runInstancesRequest.withImageId('ami-9877a5f7').withInstanceType('t2.nano')
                 .withMinCount(1).withMaxCount(1)
                 .withKeyName('Jenkins Training')
                 .withSecurityGroups(['Jenkins Master'])
 
-        RunInstancesResult result = getEC2Client().runInstances(runInstancesRequest)
+/*        RunInstancesResult result = getEC2Client().runInstances(runInstancesRequest)
         instanceId = result.reservation.instances.first().instanceId
 
         echo "    Instance ID: ${instanceId}"
