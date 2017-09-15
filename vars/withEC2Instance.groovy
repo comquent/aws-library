@@ -16,11 +16,21 @@ import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredenti
 import com.cloudbees.plugins.credentials.CredentialsProvider
 import com.cloudbees.plugins.credentials.domains.DomainRequirement
 
+
+
+/**
+ * Helper method for common code.
+ */
 AmazonEC2Client getEC2Client() {
     def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
     AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
 }
 
+
+
+/**
+ * Call on the object.
+ */
 def call(params = null, body) {
     def config = [:]
     body.resolveStrategy = Closure.DELEGATE_FIRST
@@ -69,7 +79,7 @@ def call(params = null, body) {
 
         body.PUBLIC_DNS_NAME = publicDnsName
         body.INSTANCE_ID = instanceId
-        body.SSH_PRIVATE_KEY = 'blabla'
+        body.SSH_PRIVATE_KEY = 'not yet implemented'
 
         body()
 
