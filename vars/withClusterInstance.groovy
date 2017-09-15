@@ -22,7 +22,7 @@ AmazonEC2Client getEC2Client() {
 }
 
 def call(params = null, body) {
-    def config = [:]
+/*    def config = [:]
     body.resolveStrategy = Closure.DELEGATE_FIRST
     body.delegate = config
 
@@ -47,11 +47,9 @@ def call(params = null, body) {
 
         def publicDnsName
 
-        echo "Waiting unti instance is up"
+        echo "Waiting until instance is up"
         timeout(5) {
             waitUntil {
-                sleep(time: 5)
-
                 DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest()
                 describeInstancesRequest.setInstanceIds([instanceId])
 
@@ -60,13 +58,18 @@ def call(params = null, body) {
                 def state = instance.state
                 publicDnsName = instance.getPublicDnsName()
                 echo "... State: ${state.name} (${state.code})"
-                return state.code == 16
+                if (state.code == 16) {
+                    return true
+                } else {
+                    sleep(time: 5)
+                }
             }
         }
         echo "    Public DNS name: ${publicDnsName}"
 
         body.PUBLIC_DNS_NAME = publicDnsName
         body.INSTANCE_ID = instanceId
+        body.SSH_PRIVATE_KEY = 'blabla'
 
         body()
 
@@ -77,5 +80,5 @@ def call(params = null, body) {
         def state = instanceStateChange.currentState
         echo "Terminating instance ID ${instanceId} has been triggered"
 
-    }
+    }*/
 }
