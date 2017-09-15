@@ -71,7 +71,7 @@ def call(params = null, body) {
         body.INSTANCE_ID = instanceId
         body.SSH_PRIVATE_KEY = 'blabla'
 
-/*        body()
+        body()
 
         TerminateInstancesRequest terminateInstancesRequest = new TerminateInstancesRequest([instanceId])
 
