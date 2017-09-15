@@ -39,19 +39,15 @@ def call(params = null, body) {
 
         RunInstancesResult result = ec2Client.runInstances(runInstancesRequest)
         INSTANCE_ID = result.reservation.instances.first().instanceId
-    }
 
-    echo "Instance ID: {INSTANCE_ID}"
+        echo "Instance ID: {INSTANCE_ID}"
 
-    def PUBLIC_DNS_NAME
+        def PUBLIC_DNS_NAME
 
-    timeout(5) {
-        def state
-        waitUntil {
-            sleep(time: 5)
-            withCredentials([
-                usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')
-            ]) {
+        timeout(5) {
+            def state
+            waitUntil {
+                sleep(time: 5)
 
                 def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
                 AmazonEC2Client ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
@@ -67,17 +63,13 @@ def call(params = null, body) {
             echo "State is ${state.name}"
             return state.code == 16
         }
-    }
 
-    echo "Public DNS name: ${PUBLIC_DNS_NAME}"
-
-
-    body()
+        echo "Public DNS name: ${PUBLIC_DNS_NAME}"
 
 
-    withCredentials([
-        usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')
-    ]) {
+        body()
+
+
         def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
         AmazonEC2Client ec2Client = AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
 
