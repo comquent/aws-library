@@ -78,6 +78,7 @@ def call(params = null, body) {
     body.waitOnEC2Instance = this.&waitOnEC2Instance
     body.createEC2Instance = this.&createEC2Instance
     body.terminateEC2Instance = this.&terminateEC2Instance
+    body.withEC2Instance = this.&call
 
     withCredentials([
         usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')
