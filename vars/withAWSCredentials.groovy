@@ -10,13 +10,6 @@ def waitOnEC2Instance(instanceId) {
 }
 
 
-
-def terminateEC2Instance(instanceId) {
-    echo "Terminating instance ID ${instanceId} has been triggered"
-}
-
-
-
 def call(params = null, body) {
     def config = [:]
     body.resolveStrategy = Closure.TO_SELF
@@ -25,7 +18,6 @@ def call(params = null, body) {
     // Make methods in closure available
     body.waitOnEC2Instance = this.&waitOnEC2Instance
     body.createEC2Instance = this.&createEC2Instance
-    body.terminateEC2Instance = this.&terminateEC2Instance
 
     withCredentials([
         usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')
