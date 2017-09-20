@@ -36,17 +36,7 @@ AmazonEC2Client getEC2Client() {
  */
 def createEC2Instance() {
     echo "Creating EC2 instance"
-
-    RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
-    runInstancesRequest.withImageId('ami-9877a5f7').withInstanceType('t2.nano')
-            .withMinCount(1).withMaxCount(1)
-            .withKeyName('Jenkins Training')
-            .withSecurityGroups(['Jenkins Master'])
-
-    RunInstancesResult result = getEC2Client().runInstances(runInstancesRequest)
-    instanceId = result.reservation.instances.first().instanceId
-    echo "    Instance ID: ${instanceId}"
-    instanceId
+    return "blabla"
 }
 
 
@@ -60,28 +50,7 @@ def createEC2Instance() {
  * The public DNS name of the instance
  */
 def waitOnEC2Instance(instanceId) {
-    def publicDnsName
-
     echo "Waiting until instance is up"
-    timeout(5) {
-        waitUntil {
-            DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest()
-            describeInstancesRequest.setInstanceIds([instanceId])
-
-            DescribeInstancesResult describeInstancesResult = getEC2Client().describeInstances(describeInstancesRequest)
-            def instance = describeInstancesResult.reservations.first().instances.first()
-            def state = instance.state
-            publicDnsName = instance.getPublicDnsName()
-            echo "... State: ${state.name} (${state.code})"
-            if (state.code == 16) {
-                return true
-            }
-            sleep(time: 5)
-            return false
-        }
-    }
-    echo "    Public DNS name: ${publicDnsName}"
-    publicDnsName
 }
 
 
@@ -92,11 +61,6 @@ def waitOnEC2Instance(instanceId) {
  * @param instanceId
  */
 def terminateEC2Instance(instanceId) {
-    TerminateInstancesRequest terminateInstancesRequest = new TerminateInstancesRequest([instanceId])
-
-    TerminateInstancesResult terminateInstancesResult = getEC2Client().terminateInstances(terminateInstancesRequest)
-    List <InstanceStateChange> instanceStateChange = terminateInstancesResult.terminatingInstances
-    def state = instanceStateChange.currentState
     echo "Terminating instance ID ${instanceId} has been triggered"
 }
 
@@ -121,11 +85,7 @@ def call(params = null, body) {
         def instanceId = createEC2Instance()
         body.INSTANCE_ID = instanceId
 
-        body.SSH_PRIVATE_KEY = 'not yet implemented'
-
-        if (params?.waitOn in [null, true]) {
-            body.PUBLIC_DNS_NAME = waitOnEC2Instance(instanceId)
-        }
+        body.PUBLIC_DNS_NAME = waitOnEC2Instance(instanceId)
 
         // Call closure
         body()
