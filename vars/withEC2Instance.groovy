@@ -71,7 +71,7 @@ def terminateEC2Instance(instanceId) {
  */
 def call(params = null, body) {
     def config = [:]
-    body.resolveStrategy = Closure.DELEGATE_FIRST
+    body.resolveStrategy = Closure.OWNER_FIRST
     body.delegate = config
 
     // Make methods in closure available
