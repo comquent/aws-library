@@ -1,3 +1,4 @@
+import de.comquent.awslibrary.EC2Instance
 
 def call(params = null, body) {
     def config = [:]
