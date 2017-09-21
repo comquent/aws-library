@@ -7,6 +7,8 @@ def call(params = null, body) {
     withCredentials([
         usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')
     ]) {
+        def helloObject = new EC2Instance()
+        body.hello = helloObject.hello
         body()
     }
 }
