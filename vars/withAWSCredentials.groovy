@@ -11,3 +11,7 @@ def call(params = null, body) {
         body()
     }
 }
+
+def hello() {
+    println "HELLO"
+}
