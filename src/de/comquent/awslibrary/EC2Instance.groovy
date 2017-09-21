@@ -1,6 +1,8 @@
 package de.comquent.awslibrary
 
-class EC2Instance {
+import java.io.Serializable
+
+class EC2Instance implements Serializable {
 
   public void hello() {
     println "HELLO!!!"
