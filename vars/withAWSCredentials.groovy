@@ -4,6 +4,7 @@ def call(params = null, body) {
     def config = [:]
     body.resolveStrategy = Closure.OWNER_FIRST
     body.delegate = config
+    body.hello = this.&hello
 
     withCredentials([
         usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')
@@ -12,6 +13,6 @@ def call(params = null, body) {
     }
 }
 
-def hello() {
+def hello = {
     println "HELLO"
 }
