@@ -9,7 +9,7 @@ def call(params = null, body) {
         usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')
     ]) {
         def helloObject = new EC2Instance()
-        body.hello = helloObject.&hello
+        body.hello = 'xxx' // helloObject.&hello
         body()
     }
 }
