@@ -9,10 +9,6 @@ def call(params = null, body) {
     def instanceId = createEC2Instance()
     body.INSTANCE_ID = instanceId
     
-    //body.EEC2Instance = new Object()
-    //body.EEC2Instance.metaClass.mixin Serializable
-    //body.EEC2Instance.terminate = this.&t
-
     body.PUBLIC_DNS_NAME = waitOnEC2Instance(instanceId)
 
     // Call closure
