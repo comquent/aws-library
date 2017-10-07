@@ -9,7 +9,7 @@ def call(params = null, body) {
     def instanceId = createEC2Instance()
     body.INSTANCE_ID = instanceId
     
-    body.EC2Instance = {}
+    body.EC2Instance = new Object()
     body.EC2Instance.terminate = this.&t
 
     body.PUBLIC_DNS_NAME = waitOnEC2Instance(instanceId)
