@@ -10,7 +10,7 @@ def call(params = null, body) {
     body.INSTANCE_ID = instanceId
     
     body.EC2Instance = [:]
-    body.EC2Instance.terminate = this.&terminateEC2Instance
+    body.EC2Instance.terminate = this.&t
 
     body.PUBLIC_DNS_NAME = waitOnEC2Instance(instanceId)
 
@@ -18,4 +18,8 @@ def call(params = null, body) {
     body()
 
     terminateEC2Instance(instanceId)
+}
+
+def t(wert) {
+    echo "Terminating ${wert}"
 }
