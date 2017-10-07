@@ -84,7 +84,7 @@ def create() {
  * @return
  * The public DNS name of the instance
  */
-def waitOnEC2Instance(instanceId) {
+def waitOn(instanceId) {
     def publicDnsName
 
     echo "Waiting until instance is up"
