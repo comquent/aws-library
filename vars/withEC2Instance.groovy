@@ -6,19 +6,101 @@ def call(params = null, body) {
     body.resolveStrategy = Closure.OWNER_FIRST
     body.delegate = config
 
-    def instanceId = createEC2Instance()
-    body.INSTANCE_ID = instanceId
-    
-    body.terminate = this.&t
-    
-    body.PUBLIC_DNS_NAME = waitOnEC2Instance(instanceId)
+    withCredentials([
+        usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')
+    ]) {
+        def instanceId = create()
+        body.INSTANCE_ID = instanceId
 
-    // Call closure
-    body()
+        body.SSH_PRIVATE_KEY = 'not yet implemented'
 
-    terminateEC2Instance(instanceId)
+        if (params?.waitOn in [null, true]) {
+            body.PUBLIC_DNS_NAME = waitOn(instanceId)
+        }
+
+        // Call closure
+        body()
+
+        terminate(instanceId)
+    }
 }
 
-def t(wert) {
-    echo "Terminating ${wert}"
+
+/**
+ * Helper method for common code.
+ */
+AmazonEC2Client getEC2Client() {
+    def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
+    AmazonEC2ClientBuilder.standard().withCredentials(credentials).build()
+}
+
+
+/**
+ * Create an EC2 instance.
+ * 
+ * @return
+ * The Id of the instance
+ */
+def create() {
+    echo "Creating EC2 instance"
+
+    RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
+    runInstancesRequest.withImageId('ami-9877a5f7').withInstanceType('t2.nano')
+            .withMinCount(1).withMaxCount(1)
+            .withKeyName('Jenkins Training')
+            .withSecurityGroups(['Jenkins Master'])
+
+    RunInstancesResult result = getEC2Client().runInstances(runInstancesRequest)
+    instanceId = result.reservation.instances.first().instanceId
+    echo "    Instance ID: ${instanceId}"
+    instanceId
+}
+
+
+/**
+ * Wait for the instance to be in a full running state.
+ * 
+ * @param instanceId
+ * 
+ * @return
+ * The public DNS name of the instance
+ */
+def waitOnEC2Instance(instanceId) {
+    def publicDnsName
+
+    echo "Waiting until instance is up"
+    timeout(5) {
+        waitUntil {
+            DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest()
+            describeInstancesRequest.setInstanceIds([instanceId])
+
+            DescribeInstancesResult describeInstancesResult = getEC2Client().describeInstances(describeInstancesRequest)
+            def instance = describeInstancesResult.reservations.first().instances.first()
+            def state = instance.state
+            publicDnsName = instance.getPublicDnsName()
+            echo "... State: ${state.name} (${state.code})"
+            if (state.code == 16) {
+                return true
+            }
+            sleep(time: 5)
+            return false
+        }
+    }
+    echo "    Public DNS name: ${publicDnsName}"
+    publicDnsName
+}
+
+
+/**
+ * Terminate an EC2 instance.
+ * 
+ * @param instanceId
+ */
+def terminate(instanceId) {
+    TerminateInstancesRequest terminateInstancesRequest = new TerminateInstancesRequest([instanceId])
+
+    TerminateInstancesResult terminateInstancesResult = getEC2Client().terminateInstances(terminateInstancesRequest)
+    List <InstanceStateChange> instanceStateChange = terminateInstancesResult.terminatingInstances
+    def state = instanceStateChange.currentState
+    echo "Terminating instance ID ${instanceId} has been triggered"
 }
