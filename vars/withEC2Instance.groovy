@@ -37,8 +37,10 @@ def call(params = null, body) {
     // Call closure
     body()
 
-    this.terminate(instanceId)
-
+    if (params?.terminate in [null, true]) {
+        this.terminate(instanceId)
+    }
+    
 }
 
 
