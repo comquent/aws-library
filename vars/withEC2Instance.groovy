@@ -10,6 +10,7 @@ def call(params = null, body) {
     body.INSTANCE_ID = instanceId
     
     body.EC2Instance = new Object()
+    body.EC2Instance.metaClass.mixin Serializable
     body.EC2Instance.terminate = this.&t
 
     body.PUBLIC_DNS_NAME = waitOnEC2Instance(instanceId)
