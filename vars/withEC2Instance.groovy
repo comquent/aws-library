@@ -25,23 +25,20 @@ def call(params = null, body) {
     body.resolveStrategy = Closure.OWNER_FIRST
     body.delegate = config
 
-    withCredentials([
-        usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')
-    ]) {
-        def instanceId = this.create()
-        body.INSTANCE_ID = instanceId
+    def instanceId = this.create()
+    body.INSTANCE_ID = instanceId
 
-        body.SSH_PRIVATE_KEY = 'not yet implemented'
+    body.SSH_PRIVATE_KEY = 'not yet implemented'
 
-        if (params?.waitOn in [null, true]) {
-            body.PUBLIC_DNS_NAME = this.waitOn(instanceId)
-        }
-
-        // Call closure
-        body()
-
-        this.terminate(instanceId)
+    if (params?.waitOn in [null, true]) {
+        body.PUBLIC_DNS_NAME = this.waitOn(instanceId)
     }
+
+    // Call closure
+    body()
+
+    this.terminate(instanceId)
+
 }
 
 
