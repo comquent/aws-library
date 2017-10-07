@@ -28,19 +28,19 @@ def call(params = null, body) {
     withCredentials([
         usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')
     ]) {
-        def instanceId = create()
+        def instanceId = this.create()
         body.INSTANCE_ID = instanceId
 
         body.SSH_PRIVATE_KEY = 'not yet implemented'
 
         if (params?.waitOn in [null, true]) {
-            body.PUBLIC_DNS_NAME = waitOn(instanceId)
+            body.PUBLIC_DNS_NAME = this.waitOn(instanceId)
         }
 
         // Call closure
         body()
 
-        terminate(instanceId)
+        this.terminate(instanceId)
     }
 }
 
