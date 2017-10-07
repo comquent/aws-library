@@ -84,7 +84,7 @@ def create() {
 def waitOn(instanceId) {
     def publicDnsName
 
-    echo "Waiting until instance is up"
+    echo "Waiting until instance ${instanceId} is up"
     timeout(5) {
         waitUntil {
             DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest()
