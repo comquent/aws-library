@@ -82,3 +82,5 @@ def uploadFile(storageName, key, fileName) {
 def uploadFile(key, fileName) {
     this.uploadFile(this.getS(), key, fileName)
 }
+
+this
