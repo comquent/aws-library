@@ -1,3 +1,3 @@
-{ ->
+call = { ->
 echo "hallo"
 }
