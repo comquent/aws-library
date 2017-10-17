@@ -1,3 +1,3 @@
 def call(key, fileName) {
-    withS3Instance.uploadFile(INSTANCE, key, fileName)
+    withS3Instance.uploadFile(key, fileName)
 }
