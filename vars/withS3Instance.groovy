@@ -29,9 +29,9 @@ def call(params = null, body) {
 
 def getStorages() {
     def names = []
-	  buckets = client.listBuckets()
-	  buckets.each{
-  		names << it
-	  }
+    buckets = getS3Client().listBuckets()
+    buckets.each{
+        names << it
+    }
     return names
 }
