@@ -30,8 +30,13 @@ def call(params = null, body) {
 def getStorages() {
     def names = []
     buckets = getS3Client().listBuckets()
-    buckets.each{
+    buckets.each {
         names << it
     }
     return names
+}
+
+
+def createStorage(name) {
+    return getS3Client().createBucket(name)
 }
