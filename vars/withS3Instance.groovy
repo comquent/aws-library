@@ -39,3 +39,18 @@ def getStorages() {
 def createStorage(name) {
     return getS3Client().createBucket(name)
 }
+
+
+def deleteStorage(name) {
+	if (client.doesBucketExist(name)) {
+        echo "Delete bucket ${name}."
+		getS3Client().deleteBucket(name)
+    } else {
+        echo "Bucket ${name} does not exist."
+    }
+}
+
+
+def updloadFile(storageName, path, fileName) {
+	getS3Client().putObject(storageName, fileName, path)
+}
