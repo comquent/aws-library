@@ -21,7 +21,6 @@ def call(params = null, body) {
 
     body.STORAGE = this.createStorage(params.name)
 
-    // Call closure
     body()
 }
 
@@ -36,14 +35,17 @@ def getStorages() {
 
 
 def createStorage(name) {
-    return getS3Client().createBucket(name).name
+    if (getS3Client().doesBucketExist(name)) {
+        echo "Bucket ${name} does already exist."
+    } else {
+        return getS3Client().createBucket(name).name
+    }
 }
 
 
 def deleteStorage(name) {
-	if (client.doesBucketExist(name)) {
-        echo "Delete bucket ${name}."
-		getS3Client().deleteBucket(name)
+    if (getS3Client().doesBucketExist(name)) {
+        getS3Client().deleteBucket(name)
     } else {
         echo "Bucket ${name} does not exist."
     }
