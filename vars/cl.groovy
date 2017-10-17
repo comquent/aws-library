@@ -1,5 +1,5 @@
 call = {
-echo "hallo"
+//echo "hallo"
   //echo delegate
-  echo STORAGE
+  //echo STORAGE
 }
