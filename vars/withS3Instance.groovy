@@ -34,6 +34,7 @@ def call(params = null, body) {
     def storage = this.createStorage(params.name)
     
     this.setS(storage)
+    body.STORAGE = storage
 
     body()
 }
