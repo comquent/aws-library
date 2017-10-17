@@ -37,6 +37,8 @@ def call(params = null, body) {
     body.STORAGE = storage
 
     body()
+    
+    this
 }
 
 
