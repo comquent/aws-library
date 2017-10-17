@@ -14,7 +14,7 @@ def getS3Client() {
 def STORAGE = null
 
 def getS() {
-    this.getS()
+    this.STORAGE
 }
 
 
