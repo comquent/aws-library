@@ -50,7 +50,11 @@ def deleteStorage(name) {
     }
 }
 
-
-def updloadFile(storageName, path, fileName) {
-	getS3Client().putObject(storageName, fileName, path)
+/**
+  * @todo
+  * Filehandle aus dem Context via Jenkins Api holen.
+  */
+def updloadFile(storageName, key, fileName) {
+	def content = readFile(fileName)
+	getS3Client().putObject(storageName, key, content)
 }
