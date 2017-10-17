@@ -58,6 +58,11 @@ def deleteStorage(name) {
   * Filehandle aus dem Context via Jenkins Api holen.
   */
 def uploadFile(storageName, key, fileName) {
-	def content = readFile(fileName)
-	getS3Client().putObject(storageName, key, content)
+    def content = readFile(fileName)
+    getS3Client().putObject(storageName, key, content)
+}
+
+
+def uploadFile(key, fileName) {
+    this.uploadFile(this.STORAGE, key, fileName)
 }
