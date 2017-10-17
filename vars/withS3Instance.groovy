@@ -37,6 +37,7 @@ def getStorages() {
 def createStorage(name) {
     if (getS3Client().doesBucketExist(name)) {
         echo "Bucket ${name} does already exist."
+        name
     } else {
         return getS3Client().createBucket(name).name
     }
