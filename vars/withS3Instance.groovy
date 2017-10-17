@@ -19,7 +19,8 @@ def call(params = null, body) {
     body.resolveStrategy = Closure.OWNER_FIRST
     body.delegate = config
 
-    body.STORAGE = this.createStorage(params.name)
+    this.STORAGE = this.createStorage(params.name)
+    body.STORAGE = this.STORAGE
 
     body()
 }
