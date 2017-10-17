@@ -14,7 +14,7 @@ def getS3Client() {
 def STORAGE = null
 
 def getS() {
-    'zicke'
+    this.getS()
 }
 
 
@@ -32,6 +32,7 @@ def call(params = null, body) {
     body.delegate = config
 
     def storage = this.createStorage(params.name)
+    
     this.setS(storage)
 
     body()
