@@ -13,6 +13,10 @@ def getS3Client() {
 
 def STORAGE = null
 
+def getS() {
+    'zicke'
+}
+
 /**
  * Call on the object.
  */
@@ -66,5 +70,5 @@ def uploadFile(storageName, key, fileName) {
 
 
 def uploadFile(key, fileName) {
-    this.uploadFile(this.STORAGE, key, fileName)
+    this.uploadFile(this.getS(), key, fileName)
 }
