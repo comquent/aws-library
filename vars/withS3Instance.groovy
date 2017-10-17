@@ -36,7 +36,7 @@ def getStorages() {
 
 
 def createStorage(name) {
-    return getS3Client().createBucket(name)
+    return getS3Client().createBucket(name).name
 }
 
 
