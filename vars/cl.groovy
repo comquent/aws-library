@@ -1,4 +1,4 @@
-def call() {
+this.call = {
 echo "hallo"
   echo delegate
   echo STORAGE
