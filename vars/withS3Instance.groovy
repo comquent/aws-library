@@ -14,12 +14,12 @@ def getS3Client() {
 def STORAGE = null
 
 def getS() {
-    this.STORAGE
+    withS3Instance.STORAGE
 }
 
 
 def setS(name) {
-    this.STORAGE = name
+    withS3Instance.STORAGE = name
 }
 
 
@@ -82,5 +82,3 @@ def uploadFile(storageName, key, fileName) {
 def uploadFile(key, fileName) {
     this.uploadFile(this.getS(), key, fileName)
 }
-
-this
