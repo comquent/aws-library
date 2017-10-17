@@ -17,6 +17,12 @@ def getS() {
     'zicke'
 }
 
+
+def setS(name) {
+    this.STORAGE = name
+}
+
+
 /**
  * Call on the object.
  */
@@ -25,8 +31,8 @@ def call(params = null, body) {
     body.resolveStrategy = Closure.OWNER_FIRST
     body.delegate = config
 
-    this.STORAGE = this.createStorage(params.name)
-    body.STORAGE = this.STORAGE
+    def storage = this.createStorage(params.name)
+    this.setS(storage)
 
     body()
 }
