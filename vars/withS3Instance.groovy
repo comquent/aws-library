@@ -11,6 +11,8 @@ def getS3Client() {
 }
 
 
+def STORAGE = null
+
 /**
  * Call on the object.
  */
