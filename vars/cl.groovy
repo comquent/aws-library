@@ -1,5 +1,5 @@
 this.metaClass.call = {
 echo "hallo"
-  echo delegate
+  //echo delegate
   echo STORAGE
 }
