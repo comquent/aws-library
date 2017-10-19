@@ -11,8 +11,6 @@ def getS3Client() {
 }
 
 
-def STORAGE = null
-
 def getS() {
     withS3Instance.STORAGE
 }
@@ -35,6 +33,7 @@ def call(params = null, body) {
     
     this.setS(storage)
     body.STORAGE = storage
+    binding.STORAGE = storage
 
     body()
     
