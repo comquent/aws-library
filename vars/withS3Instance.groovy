@@ -31,13 +31,10 @@ def call(params = null, body) {
 
     def storage = this.createStorage(params.name)
     
-    this.setS(storage)
     body.STORAGE = storage
     binding.STORAGE = storage
 
     body()
-    
-    this
 }
 
 
