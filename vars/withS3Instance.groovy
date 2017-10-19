@@ -11,16 +11,6 @@ def getS3Client() {
 }
 
 
-def getS() {
-    withS3Instance.STORAGE
-}
-
-
-def setS(name) {
-    withS3Instance.STORAGE = name
-}
-
-
 /**
  * Call on the object.
  */
@@ -76,5 +66,5 @@ def uploadFile(storageName, key, fileName) {
 
 
 def uploadFile(key, fileName) {
-    this.uploadFile(STORAGE, key, fileName)
+    this.uploadFile(binding.STORAGE, key, fileName)
 }
