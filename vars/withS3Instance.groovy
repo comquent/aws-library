@@ -66,5 +66,5 @@ def uploadFile(storageName, key, fileName) {
 
 
 def uploadFile(key, fileName) {
-    this.uploadFile(binding.STORAGE, key, fileName)
+    this.uploadFile(this.STORAGE, key, fileName)
 }
