@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
 
 
+@NonCPS
 def getS3Client() {
     def credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretAccessKey))
     AmazonS3ClientBuilder.standard().withCredentials(credentials).build()
