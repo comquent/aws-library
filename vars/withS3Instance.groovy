@@ -49,14 +49,9 @@ def uploadFile(storageName, key, fileName) {
 }
 
 
-def uploadFile(key, fileName) {
-    this.uploadFile(this.STORAGE, key, fileName)
-}
-
-
 def listFiles(storageName) {
     def files = []
-    getS3Client().listObjects(bucket_name).getObjectSummaries().each {
+    getS3Client().listObjects(storageName).getObjectSummaries().each {
         files << it.getKey()
     }
     return files
