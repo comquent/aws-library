@@ -62,16 +62,25 @@ def listFiles(storageName) {
   */
 @NonCPS
 def downloadFile(storageName, fileName) {
-    def stream = getS3Client().getObject(storageName, fileName).getObjectContent()
-    def fos = new FileOutputStream(new File(fileName))
-    byte[] read_buf = new byte[1024]
-    def read_len = 0
-    while ((read_len = stream.read(read_buf)) > 0) {
-        print 'X'
-        fos.write(read_buf, 0, read_len)
+    def  npuetS3Client().getObject(storageName, fileName).getObjectContent()
+	
+byte[] buffer = new byte[8 * 1024];
+
+InputStream input = urlConnect.getInputStream();
+try {
+  OutputStream output = new FileOutputStream(filename);
+  try {
+    int bytesRead;
+    while ((bytesRead = input.read(buffer)) != -1) {
+      output.write(buffer, 0, bytesRead);
     }
-    stream.close();
-    fos.close();	
+  } finally {
+    output.close();
+  }
+} finally {
+  input.close();
+}
+	
 }
 
 
