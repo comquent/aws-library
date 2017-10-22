@@ -83,8 +83,8 @@ def deleteFile(storageName, fileName) {
 
 def emptyStorage(storageName) {
     def s3Client = getS3Client()
-	s3Client.listObjects(storageName).getObjectSummaries().each {
-        println "Delete file name '${it.getKey()}'"
-		s3Client.deleteObject(storageName, it.getKey())
-	}
+    s3Client.listObjects(storageName).getObjectSummaries().each {
+        println "Delete file name '${it.key}'"
+        s3Client.deleteObject(storageName, it.key)
+    }
 }
