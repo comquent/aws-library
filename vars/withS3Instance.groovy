@@ -58,6 +58,7 @@ def listFiles(storageName) {
 }
 
 
+@NonCPS
 def downloadFile(storageName, fileName) {
     stream = getS3Client().getObject(storageName, fileName).getObjectContent();
     fos = new FileOutputStream(new File(fileName));
