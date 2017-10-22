@@ -56,3 +56,16 @@ def listFiles(storageName) {
     }
     return files
 }
+
+
+def downloadFile(storageName, fileName) {
+    stream = getS3Client().getObject(storageName, fileName).getObjectContent();
+    fos = new FileOutputStream(new File(fileName));
+    byte[] read_buf = new byte[1024];
+    read_len = 0;
+    while ((read_len = stream.read(read_buf)) > 0) {
+        fos.write(read_buf, 0, read_len);
+    }
+    stream.close();
+    fos.close();	
+}
