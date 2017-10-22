@@ -67,6 +67,7 @@ def downloadFile(storageName, fileName) {
     byte[] read_buf = new byte[1024]
     def read_len = 0
     while ((read_len = stream.read(read_buf)) > 0) {
+        print 'X'
         fos.write(read_buf, 0, read_len)
     }
     stream.close();
