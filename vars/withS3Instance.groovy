@@ -81,6 +81,9 @@ try {
   input.close();
 }
 	
+    input = null
+    output = null
+	
 }
 
 
