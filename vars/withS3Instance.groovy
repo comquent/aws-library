@@ -59,15 +59,32 @@ def listFiles(storageName) {
 }
 
 
+/**
+  * @Todo Zum Schreiben den Kontext verwenden. So kommt im Moment nix auf Platte an.
+  */
 @NonCPS
 def downloadFile(storageName, fileName) {
     def stream = getS3Client().getObject(storageName, fileName).getObjectContent()
     def fos = new FileOutputStream(new File(fileName))
-    byte[] read_buf = new byte[1024];
-    def read_len = 0;
+    byte[] read_buf = new byte[1024]
+    def read_len = 0
     while ((read_len = stream.read(read_buf)) > 0) {
-        fos.write(read_buf, 0, read_len);
+        fos.write(read_buf, 0, read_len)
     }
     stream.close();
     fos.close();	
+}
+
+
+def deleteFile(storageName, fileName) {
+	getS3Client().deleteObject(storageName, fileName)
+}
+
+
+def emptyStorage(storageName) {
+    def s3Client = get S3Client()
+	s3Client.listObjects(storageName).getObjectSummaries().each {
+        println "Delete file name '${it.getKey()}'"
+		s3Client.deleteObject(storageName, it.getKey())
+	}
 }
