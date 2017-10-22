@@ -11,23 +11,6 @@ def getS3Client() {
 }
 
 
-/**
- * Call on the object.
- */
-def call(params = null, body) {
-    def config = [:]
-    body.resolveStrategy = Closure.OWNER_FIRST
-    body.delegate = config
-
-    def storage = this.createStorage(params.name)
-    
-    body.STORAGE = storage
-    binding.STORAGE = storage
-
-    body()
-}
-
-
 def getStorages() {
     def names = []
     buckets = getS3Client().listBuckets()
@@ -55,6 +38,7 @@ def deleteStorage(name) {
     }
 }
 
+
 /**
   * @todo
   * Filehandle aus dem Context via Jenkins Api holen.
@@ -67,4 +51,13 @@ def uploadFile(storageName, key, fileName) {
 
 def uploadFile(key, fileName) {
     this.uploadFile(this.STORAGE, key, fileName)
+}
+
+
+def listFiles(storageName) {
+	def files = []
+	client.listObjects(bucket_name).getObjectSummaries().each {
+		files << it.getKey()
+	}
+	return files
 }
