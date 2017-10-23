@@ -72,8 +72,8 @@ def downloadFile(storageName, fileName) {
         input.close()
     }
 
-    def channel = currentBuild.workspace.channel
-    def fp = new FilePath(channel, currentBuild.workspace.toString() + "/${fileName}")
+    def channel = currentBuild.rawBuild.workspace.channel
+    def fp = new FilePath(channel, currentBuild.rawBuild.workspace.toString() + "/${fileName}")
     fp.copyFrom(input)
 }
 
