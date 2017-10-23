@@ -62,7 +62,7 @@ def listFiles(storageName) {
   */
 @NonCPS
 def downloadFile(storageName, fileName) {
-    def input = withS3Instance.getS3Client().getObject(storageName, fileName).getObjectContent()
+    def input = getS3Client().getObject(storageName, fileName).getObjectContent()
 	
     byte[] buffer = new byte[8 * 1024];
 
