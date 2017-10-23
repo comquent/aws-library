@@ -63,15 +63,16 @@ def listFiles(storageName) {
 def downloadFile(storageName, fileName) {
     def input = getS3Client().getObject(storageName, fileName).getObjectContent()
 
-    OutputStream output = new ByteArrayOutputStream()
+    def content
     try {
-        def content = input.bytes
-	output.write(content)
+        content = input.bytes
     } finally {
-        input.close();
+        input.close()
     }
 
-    writeFile file: fileName, text: output.toString('ISO-8859-1'), encoding: 'ISO-8859-1'
+    def channel = build.workspace.channel
+    def fp = new FilePath(channel, build.workspace.toString() + "/${fileName}")
+    fp.copyFrom(input)
 }
 
 @NonCPS
