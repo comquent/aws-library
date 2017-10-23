@@ -66,6 +66,8 @@ def downloadFile(storageName, fileName) {
 	
     byte[] buffer = new byte[8 * 1024];
 
+    new File(fileName).createNewFile()
+	
     try {
         OutputStream output = new FileOutputStream(fileName);
         try {
@@ -75,13 +77,10 @@ def downloadFile(storageName, fileName) {
             }
         } finally {
             output.close();
-            output = null
         }
     } finally {
         input.close();
     }
-	
-    input = null
 }
 
 
