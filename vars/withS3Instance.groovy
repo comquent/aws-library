@@ -68,9 +68,9 @@ def downloadFile(storageName, fileName) {
     try {
         OutputStream output = new ByteArrayOutputStream()
         int bytesRead
-        //while ((bytesRead = input.read(buffer)) != -1) {
+        while ((bytesRead = input.read(buffer)) != -1) {
         //    output.write(buffer, 0, bytesRead);
-        //}
+        }
     } finally {
         input.close();
     }
