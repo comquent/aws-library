@@ -74,7 +74,7 @@ def downloadFile(storageName, fileName) {
 
     // if(build.workspace.isRemote())
 //    def fp = new FilePath(Jenkins.getInstance().getComputer(NODE_NAME).getChannel(), fileName)
-    def fp = new FilePath(fileName)
+    def fp = new FilePath(new File(fileName))
     //def channel = currentBuild.rawBuild.workspace.channel
     //def fp = new FilePath(channel, currentBuild.rawBuild.workspace.toString() + "/${fileName}")
     fp.copyFrom(input)
