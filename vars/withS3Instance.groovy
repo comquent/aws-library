@@ -67,10 +67,6 @@ def downloadFile(storageName, fileName) {
 
     def content
     try {
-        content = input.bytes
-    } finally {
-        input.close()
-    }
 
     // if(build.workspace.isRemote())
 //    def fp = new FilePath(Jenkins.getInstance().getComputer(NODE_NAME).getChannel(), fileName)
@@ -78,6 +74,9 @@ def downloadFile(storageName, fileName) {
     //def channel = currentBuild.rawBuild.workspace.channel
     //def fp = new FilePath(channel, currentBuild.rawBuild.workspace.toString() + "/${fileName}")
     fp.copyFrom(input)
+    } finally {
+        input.close()
+    }
 }
 
 @NonCPS
