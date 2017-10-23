@@ -60,8 +60,24 @@ def listFiles(storageName) {
 /**
   * @Todo Zum Schreiben den Kontext verwenden. So kommt im Moment nix auf Platte an.
   */
-@NonCPS
 def downloadFile(storageName, fileName) {
+    def input = getS3Client().getObject(storageName, fileName).getObjectContent()
+	
+    byte[] buffer = new byte[8 * 1024]
+
+    try {
+        OutputStream output = new ByteArrayOutputStream()
+        int bytesRead;
+        while ((bytesRead = input.read(buffer)) != -1) {
+            output.write(buffer, 0, bytesRead);
+        }
+    } finally {
+        input.close();
+    }
+}
+
+@NonCPS
+def XXXdownloadFile(storageName, fileName) {
     def input = getS3Client().getObject(storageName, fileName).getObjectContent()
 	
     byte[] buffer = new byte[8 * 1024];
