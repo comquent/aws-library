@@ -63,13 +63,15 @@ def listFiles(storageName) {
 def downloadFile(storageName, fileName) {
     def input = getS3Client().getObject(storageName, fileName).getObjectContent()
 
+    OutputStream output = new ByteArrayOutputStream()
     try {
-        OutputStream output = new ByteArrayOutputStream()
         def content = input.bytes
 	output.write(content)
     } finally {
         input.close();
     }
+
+    writeFile encoding: '', file: fileName, text: output
 }
 
 @NonCPS
