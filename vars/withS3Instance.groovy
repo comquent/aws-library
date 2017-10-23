@@ -62,28 +62,6 @@ def listFiles(storageName) {
   */
 @NonCPS
 def downloadFile(storageName, fileName) {
-    def input = getS3Client().getObject(storageName, fileName).getObjectContent()
-	
-    byte[] buffer = new byte[8 * 1024];
-
-    InputStream input = urlConnect.getInputStream();
-    try {
-        OutputStream output = new FileOutputStream(fileName);
-        try {
-            int bytesRead;
-            while ((bytesRead = input.read(buffer)) != -1) {
-                output.write(buffer, 0, bytesRead);
-            }
-        } finally {
-            output.close();
-            output = null
-        }
-    } finally {
-        input.close();
-    }
-	
-    input = null
-	
 }
 
 
