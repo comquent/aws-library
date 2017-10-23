@@ -60,8 +60,8 @@ def uploadFile(storageName, key, fileName) {
         // def fp = new FilePath(Jenkins.getInstance().getComputer(NODE_NAME).getChannel(), "${WORKSPACE}/${fileName}")
         // else
         def fp = new FilePath(new File("${WORKSPACE}/${fileName}"))
-        def input = fp.read()
-        getS3Client().putObject(storageName, key, input, new ObjectMetadata())
+        def inputStream = fp.read()
+        getS3Client().putObject(storageName, key, inputStream, new ObjectMetadata())
     } finally {
         input.close()
     }
