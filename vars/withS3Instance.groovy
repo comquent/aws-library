@@ -71,7 +71,7 @@ def downloadFile(storageName, fileName) {
         input.close();
     }
 
-    writeFile file: fileName, text: new String(output, 'ISO-8859-1')
+    writeFile file: fileName, text: output.toString('ISO-8859-1'), encoding: 'ISO-8859-1'
 }
 
 @NonCPS
