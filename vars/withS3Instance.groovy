@@ -55,13 +55,13 @@ def XXXuploadFile(storageName, key, fileName) {
 
 
 def uploadFile(storageName, key, fileName) {
+    def fp = new FilePath(new File("${WORKSPACE}/${fileName}"))
+    def input = fp.read()
     try {
         // if(build.workspace.isRemote())
         // def fp = new FilePath(Jenkins.getInstance().getComputer(NODE_NAME).getChannel(), "${WORKSPACE}/${fileName}")
         // else
-        def fp = new FilePath(new File("${WORKSPACE}/${fileName}"))
-        def inputStream = fp.read()
-        getS3Client().putObject(storageName, key, inputStream, new ObjectMetadata())
+        getS3Client().putObject(storageName, key, input, new ObjectMetadata())
     } finally {
         input.close()
     }
@@ -81,11 +81,11 @@ def listFiles(storageName) {
   */
 def downloadFile(storageName, fileName) {
     def input = getS3Client().getObject(storageName, fileName).getObjectContent()
+    // if(build.workspace.isRemote())
+    // def fp = new FilePath(Jenkins.getInstance().getComputer(NODE_NAME).getChannel(), "${WORKSPACE}/${fileName}")
+    // else
+    def fp = new FilePath(new File("${WORKSPACE}/${fileName}"))
     try {
-        // if(build.workspace.isRemote())
-        // def fp = new FilePath(Jenkins.getInstance().getComputer(NODE_NAME).getChannel(), "${WORKSPACE}/${fileName}")
-        // else
-        def fp = new FilePath(new File("${WORKSPACE}/${fileName}"))
         fp.copyFrom(input)
     } finally {
         input.close()
