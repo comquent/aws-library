@@ -4,6 +4,8 @@ import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
 
+import com.amazonaws.services.s3.model.ObjectMetadata
+
 import hudson.FilePath
 
 
@@ -46,9 +48,24 @@ def deleteStorage(name) {
   * @todo
   * Filehandle aus dem Context via Jenkins Api holen.
   */
-def uploadFile(storageName, key, fileName) {
+def XXXuploadFile(storageName, key, fileName) {
     def content = readFile(fileName)
     getS3Client().putObject(storageName, key, content)
+}
+
+
+def uploadFile(storageName, key, fileName) {
+    try {
+        // if(build.workspace.isRemote())
+        // def fp = new FilePath(Jenkins.getInstance().getComputer(NODE_NAME).getChannel(), "${WORKSPACE}/${fileName}")
+        // else
+        def fp = new FilePath(new File("${WORKSPACE}/${fileName}"))
+        def input = fp.read()
+        getS3Client().putObject(storageName, key, input, new ObjectMetadata())
+    } finally {
+        input.close()
+    }
+   
 }
 
 
@@ -64,16 +81,12 @@ def listFiles(storageName) {
   */
 def downloadFile(storageName, fileName) {
     def input = getS3Client().getObject(storageName, fileName).getObjectContent()
-
-    def content
     try {
-
-    // if(build.workspace.isRemote())
-//    def fp = new FilePath(Jenkins.getInstance().getComputer(NODE_NAME).getChannel(), fileName)
-	    def fp = new FilePath(new File("${WORKSPACE}/${fileName}"))
-    //def channel = currentBuild.rawBuild.workspace.channel
-    //def fp = new FilePath(channel, currentBuild.rawBuild.workspace.toString() + "/${fileName}")
-    fp.copyFrom(input)
+        // if(build.workspace.isRemote())
+        // def fp = new FilePath(Jenkins.getInstance().getComputer(NODE_NAME).getChannel(), "${WORKSPACE}/${fileName}")
+        // else
+        def fp = new FilePath(new File("${WORKSPACE}/${fileName}"))
+        fp.copyFrom(input)
     } finally {
         input.close()
     }
