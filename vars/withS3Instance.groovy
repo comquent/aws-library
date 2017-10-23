@@ -72,7 +72,7 @@ def downloadFile(storageName, fileName) {
         input.close()
     }
 
-    def fp = new FilePath(Jenkins.getInstance().getComputer(env['NODE_NAME']).getChannel(), fileName)
+    def fp = new FilePath(Jenkins.getInstance().getComputer(NODE_NAME).getChannel(), fileName)
     //def channel = currentBuild.rawBuild.workspace.channel
     //def fp = new FilePath(channel, currentBuild.rawBuild.workspace.toString() + "/${fileName}")
     fp.copyFrom(input)
