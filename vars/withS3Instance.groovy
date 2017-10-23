@@ -62,16 +62,11 @@ def listFiles(storageName) {
   */
 def downloadFile(storageName, fileName) {
     def input = getS3Client().getObject(storageName, fileName).getObjectContent()
-	
-    byte[] buffer = new byte[8 * 1024]
 
     try {
         OutputStream output = new ByteArrayOutputStream()
-        def bytesRead
-        while ((bytesRead = input.read(buffer)) != -1) {
-		println "${bytesRead}"
-        //    output.write(buffer, 0, bytesRead);
-        }
+        def content = input.bytes
+	output.write(content)
     } finally {
         input.close();
     }
