@@ -35,10 +35,16 @@ def call(params = null, body) {
     }
 
     // Call closure
-    body()
-
-    if (params?.terminate in [null, true]) {
-        this.terminate(instanceId)
+    try {
+        body()
+    }
+    catch (e) {
+        error e
+    }
+    finally {
+        if (params?.terminate in [null, true]) {
+            this.terminate(instanceId)
+        }
     }
     
 }
