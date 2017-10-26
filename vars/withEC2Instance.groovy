@@ -39,7 +39,7 @@ def call(params = null, body) {
         body()
     }
     catch (e) {
-        error e
+        error e.message
     }
     finally {
         if (params?.terminate in [null, true]) {
