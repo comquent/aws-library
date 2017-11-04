@@ -93,7 +93,7 @@ def create() {
 def waitOn(instanceId) {
     def publicDnsName
 
-    echo "Waiting until instance ${instanceId} is up"
+    echo "Waiting until instance ${instanceId} is up and accepts SSH connections"
     timeout(5) {
         waitUntil {
             DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest()
@@ -112,13 +112,13 @@ def waitOn(instanceId) {
         }
         waitUntil {
             try {
-                Socket s = new Socket(publicDnsName, 22);
-                s.close();
-                println "Socket ok"
+                Socket s = new Socket(publicDnsName, 22)
+                s.close()
+                echo "... SSH port active"
                 return true
             }
             catch(ConnectException e) {
-                println e
+                echo "... SSH port not active"
                 sleep(time: 5)
                 return false
             }
