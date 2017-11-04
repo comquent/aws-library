@@ -28,10 +28,9 @@ def call(params = null, body) {
     def instanceId = this.create()
     body.INSTANCE_ID = instanceId
 
-    body.SSH_PRIVATE_KEY = 'not yet implemented'
-
     if (params?.waitOn in [null, true]) {
         body.PUBLIC_DNS_NAME = this.waitOn(instanceId)
+        body.PRIVATE_DNS_NAME = this.privateDnsName(instanceId)
     }
 
     // Call closure
@@ -81,6 +80,16 @@ def create() {
 }
 
 
+def privateDnsName(instanceId) {
+    DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest()
+    describeInstancesRequest.setInstanceIds([instanceId])
+
+    DescribeInstancesResult describeInstancesResult = getEC2Client().describeInstances(describeInstancesRequest)
+    def instance = describeInstancesResult.reservations.first().instances.first()
+    instance.privateDnsName
+}
+
+
 /**
  * Wait for the instance to be in a full running state and accepts
  * SSH connections.
@@ -102,7 +111,7 @@ def waitOn(instanceId) {
             DescribeInstancesResult describeInstancesResult = getEC2Client().describeInstances(describeInstancesRequest)
             def instance = describeInstancesResult.reservations.first().instances.first()
             def state = instance.state
-            publicDnsName = instance.getPublicDnsName()
+            publicDnsName = instance.publicDnsName
             echo "... State: ${state.name} (${state.code})"
             if (state.code == 16) {
                 return true
