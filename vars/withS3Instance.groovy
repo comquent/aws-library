@@ -44,16 +44,6 @@ def deleteStorage(name) {
 }
 
 
-/**
-  * @todo
-  * Filehandle aus dem Context via Jenkins Api holen.
-  */
-def XXXuploadFile(storageName, key, fileName) {
-    def content = readFile(fileName)
-    getS3Client().putObject(storageName, key, content)
-}
-
-
 def uploadFile(storageName, key, fileName) {
     def fp = new FilePath(new File("${WORKSPACE}/${fileName}"))
     def input = fp.read()
@@ -76,15 +66,12 @@ def listFiles(storageName) {
 }
 
 
-/**
-  * @Todo Zum Schreiben den Kontext verwenden. So kommt im Moment nix auf Platte an.
-  */
-def downloadFile(storageName, fileName) {
+def downloadFile(storageName, fileName, toFile = fileName) {
     def input = getS3Client().getObject(storageName, fileName).getObjectContent()
     // if(build.workspace.isRemote())
     // def fp = new FilePath(Jenkins.getInstance().getComputer(NODE_NAME).getChannel(), "${WORKSPACE}/${fileName}")
     // else
-    def fp = new FilePath(new File("${WORKSPACE}/${fileName}"))
+    def fp = new FilePath(new File("${WORKSPACE}/${toFile}"))
     try {
         fp.copyFrom(input)
     } finally {
