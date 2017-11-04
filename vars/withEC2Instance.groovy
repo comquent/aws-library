@@ -82,7 +82,8 @@ def create() {
 
 
 /**
- * Wait for the instance to be in a full running state.
+ * Wait for the instance to be in a full running state and accepts
+ * SSH connections.
  * 
  * @param instanceId
  * 
@@ -108,6 +109,19 @@ def waitOn(instanceId) {
             }
             sleep(time: 5)
             return false
+        }
+        waitUntil {
+            try {
+                Socket s = new Socket(publicDnsName, 22);
+                s.close();
+                println "Socket ok"
+                return true
+            }
+            catch(ConnectException e) {
+                println e
+                sleep(time: 5)
+                return false
+            }
         }
     }
     echo "    Public DNS name: ${publicDnsName}"
