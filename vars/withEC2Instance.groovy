@@ -68,7 +68,7 @@ def create() {
     echo "Creating EC2 instance"
 
     RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
-    runInstancesRequest.withImageId('ami-9877a5f7').withInstanceType('t2.nano')
+    runInstancesRequest.withImageId('ami-e28d098d').withInstanceType('t2.nano')
             .withMinCount(1).withMaxCount(1)
             .withKeyName('Jenkins Training')
             .withSecurityGroups(['Jenkins Master'])
