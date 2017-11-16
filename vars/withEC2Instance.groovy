@@ -71,7 +71,7 @@ def create() {
     runInstancesRequest.withImageId('ami-e28d098d').withInstanceType('t2.nano')
             .withMinCount(1).withMaxCount(1)
             .withKeyName('Jenkins Training')
-            .withSecurityGroups(['Jenkins Master'])
+            .withSecurityGroups(['launch-wizard-1'])
 
     RunInstancesResult result = getEC2Client().runInstances(runInstancesRequest)
     instanceId = result.reservation.instances.first().instanceId
