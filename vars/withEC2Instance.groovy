@@ -68,7 +68,7 @@ def create() {
     echo "Creating EC2 instance"
 
     RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
-    runInstancesRequest.withImageId('ami-e28d098d').withInstanceType('t2.nano')
+    runInstancesRequest.withImageId('ami-37c64558').withInstanceType('t2.nano')
             .withMinCount(1).withMaxCount(1)
             .withKeyName('Voxxed Days Workshop')
             .withSecurityGroups(['launch-wizard-1'])
