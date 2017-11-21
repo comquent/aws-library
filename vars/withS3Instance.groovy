@@ -79,29 +79,6 @@ def downloadFile(storageName, fileName, toFile = fileName) {
     }
 }
 
-@NonCPS
-def XXXdownloadFile(storageName, fileName) {
-    def input = getS3Client().getObject(storageName, fileName).getObjectContent()
-	
-    byte[] buffer = new byte[8 * 1024];
-
-    (new File(fileName)).mkdirs()
-	
-    try {
-        OutputStream output = new FileOutputStream(fileName);
-        try {
-            int bytesRead;
-            while ((bytesRead = input.read(buffer)) != -1) {
-                output.write(buffer, 0, bytesRead);
-            }
-        } finally {
-            output.close();
-        }
-    } finally {
-        input.close();
-    }
-}
-
 
 def deleteFile(storageName, fileName) {
 	getS3Client().deleteObject(storageName, fileName)
