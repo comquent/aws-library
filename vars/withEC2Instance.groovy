@@ -17,6 +17,37 @@ import com.cloudbees.plugins.credentials.CredentialsProvider
 import com.cloudbees.plugins.credentials.domains.DomainRequirement
 
 
+/**
+ * Call on the object.
+ */
+def call(params = null, body) {
+    def config = [:]
+    body.resolveStrategy = Closure.OWNER_FIRST
+    body.delegate = config
+
+    def instanceId = this.create()
+    body.INSTANCE_ID = instanceId
+
+    if (params?.waitOn in [null, true]) {
+        body.PUBLIC_DNS_NAME = this.waitOn(instanceId)
+        body.PRIVATE_DNS_NAME = this.privateDnsName(instanceId)
+    }
+
+    // Call closure
+    try {
+        body()
+    }
+    catch (e) {
+        error e.message
+    }
+    finally {
+        if (params?.terminate in [null, true]) {
+            this.terminate(instanceId)
+        }
+    }
+    
+}
+
 
 /**
  * Helper method for common code.
@@ -27,21 +58,20 @@ AmazonEC2Client getEC2Client() {
 }
 
 
-
 /**
  * Create an EC2 instance.
  * 
  * @return
  * The Id of the instance
  */
-def createEC2Instance() {
+def create() {
     echo "Creating EC2 instance"
 
     RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
-    runInstancesRequest.withImageId('ami-9877a5f7').withInstanceType('t2.nano')
+    runInstancesRequest.withImageId('ami-37c64558').withInstanceType('t2.nano')
             .withMinCount(1).withMaxCount(1)
-            .withKeyName('Jenkins Training')
-            .withSecurityGroups(['Jenkins Master'])
+            .withKeyName('Voxxed Days Workshop')
+            .withSecurityGroups(['launch-wizard-1'])
 
     RunInstancesResult result = getEC2Client().runInstances(runInstancesRequest)
     instanceId = result.reservation.instances.first().instanceId
@@ -50,19 +80,29 @@ def createEC2Instance() {
 }
 
 
+def privateDnsName(instanceId) {
+    DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest()
+    describeInstancesRequest.setInstanceIds([instanceId])
+
+    DescribeInstancesResult describeInstancesResult = getEC2Client().describeInstances(describeInstancesRequest)
+    def instance = describeInstancesResult.reservations.first().instances.first()
+    instance.privateDnsName
+}
+
 
 /**
- * Wait for the instance to be in a full running state.
+ * Wait for the instance to be in a full running state and accepts
+ * SSH connections.
  * 
  * @param instanceId
  * 
  * @return
  * The public DNS name of the instance
  */
-def waitOnEC2Instance(instanceId) {
+def waitOn(instanceId) {
     def publicDnsName
 
-    echo "Waiting until instance is up"
+    echo "Waiting until instance ${instanceId} is up and accepts SSH connections"
     timeout(5) {
         waitUntil {
             DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest()
@@ -71,7 +111,7 @@ def waitOnEC2Instance(instanceId) {
             DescribeInstancesResult describeInstancesResult = getEC2Client().describeInstances(describeInstancesRequest)
             def instance = describeInstancesResult.reservations.first().instances.first()
             def state = instance.state
-            publicDnsName = instance.getPublicDnsName()
+            publicDnsName = instance.publicDnsName
             echo "... State: ${state.name} (${state.code})"
             if (state.code == 16) {
                 return true
@@ -79,11 +119,23 @@ def waitOnEC2Instance(instanceId) {
             sleep(time: 5)
             return false
         }
+        waitUntil {
+            try {
+                Socket s = new Socket(publicDnsName, 22)
+                s.close()
+                echo "... SSH port active"
+                return true
+            }
+            catch(ConnectException e) {
+                echo "... SSH port not active"
+                sleep(time: 5)
+                return false
+            }
+        }
     }
     echo "    Public DNS name: ${publicDnsName}"
     publicDnsName
 }
-
 
 
 /**
@@ -91,45 +143,11 @@ def waitOnEC2Instance(instanceId) {
  * 
  * @param instanceId
  */
-def terminateEC2Instance(instanceId) {
+def terminate(instanceId) {
     TerminateInstancesRequest terminateInstancesRequest = new TerminateInstancesRequest([instanceId])
 
     TerminateInstancesResult terminateInstancesResult = getEC2Client().terminateInstances(terminateInstancesRequest)
     List <InstanceStateChange> instanceStateChange = terminateInstancesResult.terminatingInstances
     def state = instanceStateChange.currentState
     echo "Terminating instance ID ${instanceId} has been triggered"
-}
-
-
-
-/**
- * Call on the object.
- */
-def call(params = null, body) {
-    def config = [:]
-    body.resolveStrategy = Closure.DELEGATE_FIRST
-    body.delegate = config
-
-    // Make methods in closure available
-    body.waitOnEC2Instance = this.&waitOnEC2Instance
-    body.createEC2Instance = this.&createEC2Instance
-    body.terminateEC2Instance = this.&terminateEC2Instance
-
-    withCredentials([
-        usernamePassword(credentialsId: params.credentials, usernameVariable: 'accessKey', passwordVariable: 'secretAccessKey')
-    ]) {
-        def instanceId = createEC2Instance()
-        body.INSTANCE_ID = instanceId
-
-        body.SSH_PRIVATE_KEY = 'not yet implemented'
-
-        if (params?.waitOn in [null, true]) {
-            body.PUBLIC_DNS_NAME = waitOnEC2Instance(instanceId)
-        }
-
-        // Call closure
-        body()
-
-        terminateEC2Instance(instanceId)
-    }
 }
