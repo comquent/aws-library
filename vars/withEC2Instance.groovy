@@ -70,8 +70,8 @@ def create() {
     RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
     runInstancesRequest.withImageId('ami-89e033e6').withInstanceType('t2.nano')
             .withMinCount(1).withMaxCount(1)
-            .withKeyName('Voxxed Days Workshop')
-            .withSecurityGroups(['Jenkins Training'])
+            .withKeyName('Jenkins Training')
+            .withSecurityGroups(['Jenkins Master'])
 
     RunInstancesResult result = getEC2Client().runInstances(runInstancesRequest)
     instanceId = result.reservation.instances.first().instanceId
