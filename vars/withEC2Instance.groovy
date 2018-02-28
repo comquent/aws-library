@@ -68,10 +68,10 @@ def create() {
     echo "Creating EC2 instance"
 
     RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
-    runInstancesRequest.withImageId('ami-37c64558').withInstanceType('t2.nano')
+    runInstancesRequest.withImageId('ami-89e033e6').withInstanceType('t2.nano')
             .withMinCount(1).withMaxCount(1)
             .withKeyName('Voxxed Days Workshop')
-            .withSecurityGroups(['launch-wizard-1'])
+            .withSecurityGroups(['Jenkins Training'])
 
     RunInstancesResult result = getEC2Client().runInstances(runInstancesRequest)
     instanceId = result.reservation.instances.first().instanceId
