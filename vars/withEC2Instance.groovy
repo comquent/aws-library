@@ -28,7 +28,7 @@ def call(params = null, body) {
     // instance parameter
     def imageId = params?.imageId != null ? params?.imageId : 'ami-89e033e6'
     
-    def instanceId = this.create()
+    def instanceId = this.create(params?.imageId, 't2.small')
     body.INSTANCE_ID = instanceId
 
     if (params?.waitOn in [null, true]) {
@@ -69,6 +69,8 @@ AmazonEC2Client getEC2Client() {
  */
 def create(String imageId = 'ami-89e033e6', String instanceType = 't2.nano') {
     echo "Creating EC2 instance"
+    echo " # imageId      = " + imageId
+    echo " # instanceType = " + instanceType
 
     RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
     runInstancesRequest.withImageId(imageId).withInstanceType(instanceType)
