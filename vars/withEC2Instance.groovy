@@ -25,6 +25,9 @@ def call(params = null, body) {
     body.resolveStrategy = Closure.OWNER_FIRST
     body.delegate = config
 
+    // instance parameter
+    def imageId = params?.imageId != null ? params?.imageId : 'ami-89e033e6'
+    
     def instanceId = this.create()
     body.INSTANCE_ID = instanceId
 
@@ -64,11 +67,11 @@ AmazonEC2Client getEC2Client() {
  * @return
  * The Id of the instance
  */
-def create() {
+def create(String imageId = 'ami-89e033e6', String instanceType = 't2.nano') {
     echo "Creating EC2 instance"
 
     RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
-    runInstancesRequest.withImageId('ami-89e033e6').withInstanceType('t2.nano')
+    runInstancesRequest.withImageId(imageId).withInstanceType(instanceType)
             .withMinCount(1).withMaxCount(1)
             .withKeyName('Jenkins Training')
             .withSecurityGroups(['Jenkins Master'])
