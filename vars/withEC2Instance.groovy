@@ -26,9 +26,9 @@ def call(params = null, body) {
     body.delegate = config
 
     // instance parameter
-    def imageId = params?.imageId != null ? params?.imageId : 'ami-89e033e6'
+    //def imageId = params?.imageId != null ? params?.imageId : 'ami-89e033e6'
     
-    def instanceId = this.create(imageId, 't2.small')
+    def instanceId = this.create(imageId: params?.imageId, instanceType: params?.instanceType)
     body.INSTANCE_ID = instanceId
 
     if (params?.waitOn in [null, true]) {
@@ -67,7 +67,7 @@ AmazonEC2Client getEC2Client() {
  * @return
  * The Id of the instance
  */
-def create(String imageId, String instanceType = 't2.nano') {
+def create(String imageId = 'ami-89e033e6', String instanceType = 't2.nano') {
     echo "Creating EC2 instance"
     echo " # imageId      = " + imageId
     echo " # instanceType = " + instanceType
