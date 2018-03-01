@@ -67,7 +67,7 @@ AmazonEC2Client getEC2Client() {
  * @return
  * The Id of the instance
  */
-def create(String imageId = 'ami-89e033e6', String instanceType = 't2.nano') {
+def create(String imageId = "ami-89e033e6", String instanceType = "t2.nano") {
     echo "Creating EC2 instance"
     echo " # imageId      = " + imageId
     echo " # instanceType = " + instanceType
