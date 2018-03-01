@@ -26,9 +26,10 @@ def call(params = null, body) {
     body.delegate = config
 
     // instance parameter
-    //def imageId = params?.imageId != null ? params?.imageId : 'ami-89e033e6'
+    def String imageId = params?.imageId != null ? params?.imageId : "ami-89e033e6"
+    def String instanceType = params?.instanceType != null ? params?.instanceType : "t2.nano"
     
-    def instanceId = this.create(imageId: params?.imageId, instanceType: params?.instanceType)
+    def instanceId = this.create(imageId, instanceType)
     body.INSTANCE_ID = instanceId
 
     if (params?.waitOn in [null, true]) {
