@@ -9,6 +9,7 @@ import com.amazonaws.services.ec2.model.TerminateInstancesRequest
 import com.amazonaws.services.ec2.model.TerminateInstancesResult
 import com.amazonaws.services.ec2.model.InstanceStateChange
 import com.amazonaws.services.ec2.waiters.AmazonEC2Waiters
+import com.amazonaws.waiters.WaiterParameters
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider
 import com.amazonaws.auth.BasicAWSCredentials
