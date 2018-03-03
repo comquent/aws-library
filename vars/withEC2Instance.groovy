@@ -92,16 +92,22 @@ def create(String imageId = "ami-4b4e2224", String instanceType = "t2.nano") {
     
     AmazonEC2Waiters ec2waiter = new AmazonEC2Waiters(client)
     try{
+        println "Instance is wait for is running"
         Waiter<DescribeInstancesRequest> waiterRunning = ec2waiter.instanceRunning();   
         waiterRunning.run(new WaiterParameters<>(describeInstancesRequest))
+        println "Instance ID: ${instanceId} is running"
         echo "Instance ID: ${instanceId} is running"
 
+        println "Instance is wait for existing"
         Waiter<DescribeInstancesRequest> waiterExists = ec2waiter.instanceExists();   
         waiterExists.run(new WaiterParameters<>(describeInstancesRequest))
+        println "Instance ID: ${instanceId} exist"
         echo "Instance ID: ${instanceId} exist"
         
+        println "Instance is wait for status ok"
         Waiter<DescribeInstanceStatusRequest> waiterStatusOk = ec2waiter.instanceStatusOk();   
         waiterStatusOk.run(new WaiterParameters<>(describeInstanceStatusRequest))
+        println "Instance ID: ${instanceId} Status OK"
         echo "Instance ID: ${instanceId} Status OK"
     }
     catch(Exception e){
