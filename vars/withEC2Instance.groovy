@@ -87,7 +87,7 @@ def create(String imageId = "ami-4b4e2224", String instanceType = "t2.nano") {
     echo "before runInstance"
     RunInstancesResult result = client.runInstances(runInstancesRequest)
     instanceId = result.reservation.instances.first().instanceId
-
+/*
     echo "InstanceID = " + instanceId
     DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest()
     describeInstancesRequest.setInstanceIds([instanceId])
@@ -120,7 +120,7 @@ def create(String imageId = "ami-4b4e2224", String instanceType = "t2.nano") {
         error "ERROR: " + e.message;
     }
     
-    
+*/    
     echo "    Instance ID: ${instanceId}"
     instanceId
 }
