@@ -71,8 +71,8 @@ AmazonEC2Client getEC2Client() {
  */
 def create(String imageId = "ami-4b4e2224", String instanceType = "t2.nano") {
     echo "Creating EC2 instance"
-    echo " # imageId      = " + imageId
-    echo " # instanceType = " + instanceType
+    println " * imageId      = " + imageId
+    println " * instanceType = " + instanceType
 
     RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
     runInstancesRequest.withImageId(imageId).withInstanceType(instanceType)
