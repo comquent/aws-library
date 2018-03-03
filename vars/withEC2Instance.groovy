@@ -34,11 +34,8 @@ def call(params = null, body) {
     
     def instanceId = this.create(imageId, instanceType)
     body.INSTANCE_ID = instanceId
-
-    if (params?.waitOn in [null, true]) {
-        body.PUBLIC_DNS_NAME = this.waitOn(instanceId)
-        body.PRIVATE_DNS_NAME = this.privateDnsName(instanceId)
-    }
+    body.PUBLIC_DNS_NAME = this.publicDnsName(instanceId)
+    body.PRIVATE_DNS_NAME = this.privateDnsName(instanceId)
 
     // Call closure
     try {
@@ -103,6 +100,14 @@ def create(String imageId = "ami-4b4e2224", String instanceType = "t2.nano") {
     instanceId
 }
 
+def publicDnsName(instanceId) {
+    DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest()
+    describeInstancesRequest.setInstanceIds([instanceId])
+
+    DescribeInstancesResult describeInstancesResult = getEC2Client().describeInstances(describeInstancesRequest)
+    def instance = describeInstancesResult.reservations.first().instances.first()
+    instance.publicDnsName
+}
 
 def privateDnsName(instanceId) {
     DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest()
