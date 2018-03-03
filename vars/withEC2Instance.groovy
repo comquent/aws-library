@@ -75,11 +75,13 @@ def create(String imageId = "ami-4b4e2224", String instanceType = "t2.nano") {
     println " * instanceType = " + instanceType
 
     RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
+    echo "prepare request"
     runInstancesRequest.withImageId(imageId).withInstanceType(instanceType)
             .withMinCount(1).withMaxCount(1)
             .withKeyName('Jenkins Training')
             .withSecurityGroups(['Jenkins Master'])
 
+    echo "get client"
     AmazonEC2Client client = getEC2Client();
   
     echo "before runInstance"
