@@ -81,15 +81,19 @@ def create(String imageId = "ami-4b4e2224", String instanceType = "t2.nano") {
             .withSecurityGroups(['Jenkins Master'])
 
     AmazonEC2Client client = getEC2Client();
+  
+    echo "before runInstance"
     RunInstancesResult result = client.runInstances(runInstancesRequest)
     instanceId = result.reservation.instances.first().instanceId
 
+    echo "InstanceID = " + instanceId
     DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest()
     describeInstancesRequest.setInstanceIds([instanceId])
     
     DescribeInstanceStatusRequest describeInstanceStatusRequest = new DescribeInstanceStatusRequest()
     describeInstanceStatusRequest.setInstanceIds([instanceId])
     
+    echo "before instance waiter"
     AmazonEC2Waiters ec2waiter = new AmazonEC2Waiters(client)
     try{
         println "Instance is wait for is running"
