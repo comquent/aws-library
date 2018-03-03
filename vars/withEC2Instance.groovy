@@ -8,6 +8,7 @@ import com.amazonaws.services.ec2.model.Reservation
 import com.amazonaws.services.ec2.model.TerminateInstancesRequest
 import com.amazonaws.services.ec2.model.TerminateInstancesResult
 import com.amazonaws.services.ec2.model.InstanceStateChange
+import com.amazonaws.services.ec2.waiters.AmazonEC2Waiters
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider
 import com.amazonaws.auth.BasicAWSCredentials
@@ -79,8 +80,23 @@ def create(String imageId = "ami-4b4e2224", String instanceType = "t2.nano") {
             .withKeyName('Jenkins Training')
             .withSecurityGroups(['Jenkins Master'])
 
-    RunInstancesResult result = getEC2Client().runInstances(runInstancesRequest)
+    AmazonEC2Client client = getEC2Client();
+    RunInstancesResult result = client.runInstances(runInstancesRequest)
     instanceId = result.reservation.instances.first().instanceId
+
+    DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest()
+    describeInstancesRequest.setInstanceIds([instanceId])
+    
+    AmazonEC2Waiters ec2waiter = new AmazonEC2Waiters(client)
+    Waiter<DescribeInstancesRequest> waiter = ec2waiter.instanceRunning();   
+    try{
+        waiter.run(new WaiterParameters<>(describeInstancesRequest); 
+    }
+    catch(Exception e){
+        error "ERROR: " + e.message;
+    }
+    
+    
     echo "    Instance ID: ${instanceId}"
     instanceId
 }
@@ -93,54 +109,6 @@ def privateDnsName(instanceId) {
     DescribeInstancesResult describeInstancesResult = getEC2Client().describeInstances(describeInstancesRequest)
     def instance = describeInstancesResult.reservations.first().instances.first()
     instance.privateDnsName
-}
-
-
-/**
- * Wait for the instance to be in a full running state and accepts
- * SSH connections.
- * 
- * @param instanceId
- * 
- * @return
- * The public DNS name of the instance
- */
-def waitOn(instanceId) {
-    def publicDnsName
-
-    echo "Waiting until instance ${instanceId} is up and accepts SSH connections"
-    timeout(5) {
-        waitUntil {
-            DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest()
-            describeInstancesRequest.setInstanceIds([instanceId])
-
-            DescribeInstancesResult describeInstancesResult = getEC2Client().describeInstances(describeInstancesRequest)
-            def instance = describeInstancesResult.reservations.first().instances.first()
-            def state = instance.state
-            publicDnsName = instance.publicDnsName
-            echo "... State: ${state.name} (${state.code})"
-            if (state.code == 16) {
-                return true
-            }
-            sleep(time: 5)
-            return false
-        }
-        waitUntil {
-            try {
-                Socket s = new Socket(publicDnsName, 22)
-                s.close()
-                echo "... SSH port active"
-                return true
-            }
-            catch(ConnectException e) {
-                echo "... SSH port not active"
-                sleep(time: 5)
-                return false
-            }
-        }
-    }
-    echo "    Public DNS name: ${publicDnsName}"
-    publicDnsName
 }
 
 
