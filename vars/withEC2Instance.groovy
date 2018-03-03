@@ -90,7 +90,7 @@ def create(String imageId = "ami-4b4e2224", String instanceType = "t2.nano") {
     AmazonEC2Waiters ec2waiter = new AmazonEC2Waiters(client)
     Waiter<DescribeInstancesRequest> waiter = ec2waiter.instanceRunning();   
     try{
-        waiter.run(new WaiterParameters<>(describeInstancesRequest); 
+        waiter.run(new WaiterParameters<>(describeInstancesRequest)) 
     }
     catch(Exception e){
         error "ERROR: " + e.message;
